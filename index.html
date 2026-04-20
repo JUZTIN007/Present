@@ -2,116 +2,107 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flight 2504: 3D Depth Experience ✈️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Flight 2504: The Final Approach ✈️</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
 <style>
+    :root {
+        --gold: #fcc419;
+        --glass: rgba(255, 255, 255, 0.1);
+        --accent: #ff4d6d;
+    }
+
     body, html {
         margin: 0; padding: 0; width: 100%; height: 100%;
-        overflow: hidden; font-family: 'Segoe UI', sans-serif;
-        background: #0a192f;
+        overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+        background: #000; color: white;
     }
 
-    /* 🌌 3D Space Background */
-    #scene {
-        position: relative;
-        width: 100%; height: 100%;
-        perspective: 1000px; /* This creates the 3D depth */
+    /* 🌌 3D Space & Atmosphere */
+    #world {
+        position: relative; width: 100%; height: 100%;
+        perspective: 1200px;
+        background: linear-gradient(to bottom, #020111 10%, #191621 100%);
     }
 
-    #sky {
-        position: absolute;
-        width: 100%; height: 100%;
-        background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
-        transition: background 3s ease;
-        z-index: 1;
-    }
-
-    /* ✈️ 3D Perspective Plane */
-    #airplane-container {
-        position: absolute;
-        width: 80px; height: 80px;
-        left: -100px; top: 50%;
+    /* ✈️ Ultra Realistic 3D Plane Shadow & Tilt */
+    #plane-wrapper {
+        position: absolute; width: 80px; height: 80px;
+        left: -100px; top: 45%;
         transform-style: preserve-3d;
-        transition: all 4s cubic-bezier(0.37, 0, 0.63, 1);
+        transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 100;
     }
 
-    .plane-model {
+    #plane-model {
         width: 100%; height: 100%;
-        filter: drop-shadow(0 20px 10px rgba(0,0,0,0.3));
-        transform: rotateY(0deg) rotateX(0deg);
+        filter: drop-shadow(0 30px 15px rgba(0,0,0,0.5));
         transition: transform 4s;
     }
 
-    /* ☁️ Layered Parallax Clouds */
+    /* ☁️ Deep Parallax Layers */
     .cloud {
-        position: absolute;
-        background: white;
-        border-radius: 50px;
-        opacity: 0.4;
-        filter: blur(2px);
-        animation: drift linear infinite;
+        position: absolute; background: #fff; border-radius: 50%;
+        filter: blur(15px); opacity: 0.3; animation: flow linear infinite;
+    }
+    .c1 { width: 200px; height: 60px; z-index: 5; animation-duration: 15s; }
+    .c2 { width: 300px; height: 100px; z-index: 150; opacity: 0.5; filter: blur(25px); animation-duration: 8s; }
+
+    @keyframes flow {
+        from { transform: translateZ(-300px) translateX(120vw); }
+        to { transform: translateZ(-300px) translateX(-100vw); }
     }
 
-    /* Back clouds (Slow) */
-    .c-back { z-index: 2; opacity: 0.2; }
-    /* Front clouds (Fast) */
-    .c-front { z-index: 150; opacity: 0.6; filter: blur(0px); }
-
-    @keyframes drift {
-        from { transform: translateZ(-200px) translateX(120vw); }
-        to { transform: translateZ(-200px) translateX(-50vw); }
-    }
-
-    /* 📄 Glassmorphism Story Card */
+    /* 📄 High-End Glass Cards */
     .card {
-        position: absolute;
-        bottom: 8%; left: 50%;
-        transform: translateX(-50%) translateZ(50px);
+        position: absolute; bottom: 10%; left: 50%;
+        transform: translateX(-50%) translateZ(100px);
         width: 85%; max-width: 380px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255,255,255,0.2);
-        padding: 25px;
-        border-radius: 20px;
-        text-align: center;
-        color: white;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-        opacity: 0; visibility: hidden;
-        transition: 1s;
-        z-index: 200;
+        background: rgba(15, 15, 15, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 30px; border-radius: 24px;
+        text-align: center; opacity: 0; visibility: hidden;
+        transition: 1.2s; z-index: 200;
     }
 
-    .card.active { opacity: 1; visibility: visible; }
+    .card.active { opacity: 1; visibility: visible; transform: translateX(-50%) translateZ(100px) translateY(-10px); }
 
     .btn {
-        background: #fcc419;
-        color: #000;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 30px;
-        font-weight: bold;
-        margin-top: 15px;
-        cursor: pointer;
-        text-transform: uppercase;
-        font-size: 12px;
+        background: #fff; color: #000; border: none;
+        padding: 15px 35px; border-radius: 40px;
+        font-weight: 700; margin-top: 20px; cursor: pointer;
+        text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
     }
 
-    /* 🎁 Garage Grid */
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-    .box { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; font-size: 20px; }
-    .box:hover { background: #fcc419; color: black; }
+    /* 🎁 Gift Reveal Styles */
+    .gift-animation {
+        font-size: 70px; margin-bottom: 20px;
+        animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+    .special-text {
+        font-size: 18px; font-weight: 600; color: var(--gold);
+        margin-bottom: 10px; line-height: 1.4;
+    }
+
+    .crate-box {
+        background: linear-gradient(145deg, #1a1a1a, #222);
+        padding: 25px; border-radius: 15px; border: 1px solid var(--gold);
+        cursor: pointer; margin: 10px; transition: 0.3s;
+    }
+    .crate-box:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--gold); }
+
 </style>
 </head>
 <body>
 
-<div id="scene">
-    <div id="sky"></div>
-    
-    <div id="airplane-container">
-        <div class="plane-model">
+<div id="world">
+    <div id="plane-wrapper">
+        <div id="plane-model">
             <svg viewBox="0 0 24 24" fill="white">
                 <path d="M21,16L21,14L13,9L13,3.5A1.5,1.5 0 0,0 11.5,2A1.5,1.5 0 0,0 10,3.5L10,9L2,14L2,16L10,13.5L10,19L8,20.5L8,22L11.5,21L15,22L15,20.5L13,19L13,13.5L21,16Z" />
             </svg>
@@ -119,117 +110,119 @@
     </div>
 
     <div id="stop1" class="card active">
-        <h2 style="color:#fcc419">Altitude: Departure</h2>
-        <p>"A year of radio silence. Two different worlds, finally cleared for takeoff."</p>
-        <button class="btn" onclick="fly(2, '#ff9a9e')">Climb Altitude</button>
+        <h2 style="color: var(--gold); letter-spacing: 2px;">LOGBOOK: 2025</h2>
+        <p>"A year of radio silence. Two souls drifting in parallel, waiting for the right frequency."</p>
+        <button class="btn" onclick="fly(2)">Engage Ascent</button>
     </div>
 
     <div id="stop2" class="card">
-        <h2 style="color:#fcc419">Altitude: 25,000 FT</h2>
-        <p>"The frequency cleared. Silence turned into conversations, and we found our way back."</p>
-        <button class="btn" onclick="fly(3, '#0f2027')">Stay on Course</button>
+        <h2 style="color: var(--gold); letter-spacing: 2px;">ALTITUDE: 35K FT</h2>
+        <p>"Then, the signal returned. From silence to conversations... we finally found our way back."</p>
+        <button class="btn" onclick="fly(3)">Steady Flight</button>
     </div>
 
     <div id="stop3" class="card">
-        <h2 style="color:#fcc419">Final Approach</h2>
-        <p>"Knowing you now is the best part of the journey. I'm glad we're landing together."</p>
-        <button class="btn" onclick="fly(4, '#000')">Touchdown</button>
+        <h2 style="color: var(--gold); letter-spacing: 2px;">FINAL APPROACH</h2>
+        <p>"Knowing you now is the best part of the voyage. Runway 2504 is clear for landing."</p>
+        <button class="btn" onclick="fly(4)">Execute Touchdown</button>
     </div>
 
     <div id="stop4" class="card">
-        <h2 style="color:#fcc419">Destination Reached</h2>
-        <p>Runway clear. Select your birthday cargo.</p>
-        <div class="grid">
-            <div class="box" onclick="reveal(1)">🎁</div>
-            <div class="box" onclick="reveal(2)">🎁</div>
-            <div class="box" onclick="reveal(3)">🎁</div>
-            <div class="box" onclick="reveal(4)">🎁</div>
+        <h2 style="color: var(--gold);">MISSION COMPLETE</h2>
+        <p>Unlock your birthday cargo:</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr;">
+            <div class="crate-box" onclick="revealGift(1)">📦</div>
+            <div class="crate-box" onclick="revealGift(2)">📦</div>
+            <div class="crate-box" onclick="revealGift(3)">📦</div>
+            <div class="crate-box" onclick="revealGift(4)">📦</div>
         </div>
     </div>
 
     <div id="stop5" class="card">
-        <div id="gift-icon" style="font-size: 50px;"></div>
-        <p id="gift-text"></p>
-        <div id="cake" style="font-size: 60px; cursor: pointer; margin: 10px 0;" onclick="blow()">🎂</div>
-        <p style="font-size: 11px;">Make a wish and tap the cake</p>
-        <div id="final" style="display:none; font-weight: bold; color:#fcc419; margin-top: 15px;">
-            HAPPY BIRTHDAY! ❤️ <br> GLAD WE FOUND OUR WAY BACK.
+        <div id="gift-visual" class="gift-animation"></div>
+        <div id="gift-name" class="special-text"></div>
+        <p id="gift-desc" style="font-size: 14px; color: #bbb;"></p>
+        
+        <div id="cake-section" style="margin-top: 20px;">
+            <div id="cake-btn" style="font-size: 60px; cursor: pointer;" onclick="blowCake()">🎂</div>
+            <p style="font-size: 11px; opacity: 0.6;">Make a wish and blow</p>
+        </div>
+
+        <div id="final-wish" style="display:none; margin-top: 20px; border-top: 1px solid #333; padding-top: 20px;">
+            <h3 style="color: var(--gold);">HAPPY BIRTHDAY!</h3>
+            <p style="font-style: normal; font-size: 15px;">I'm so glad we found our frequency again. ❤️</p>
         </div>
     </div>
 </div>
 
 <script>
-    // Create Parallax Clouds
-    function createClouds() {
-        const scene = document.getElementById('scene');
-        for (let i = 0; i < 15; i++) {
-            const cloud = document.createElement('div');
-            const isFront = Math.random() > 0.7;
-            cloud.className = 'cloud ' + (isFront ? 'c-front' : 'c-back');
-            cloud.style.width = Math.random() * 100 + 60 + 'px';
-            cloud.style.height = Math.random() * 40 + 20 + 'px';
-            cloud.style.top = Math.random() * 100 + 'vh';
-            cloud.style.animationDuration = (isFront ? Math.random() * 5 + 3 : Math.random() * 15 + 10) + 's';
-            cloud.style.animationDelay = Math.random() * 5 + 's';
-            scene.appendChild(cloud);
-        }
+    // Create Deep Atmosphere Clouds
+    const world = document.getElementById('world');
+    for (let i = 0; i < 12; i++) {
+        const cloud = document.createElement('div');
+        cloud.className = i % 2 === 0 ? 'cloud c1' : 'cloud c2';
+        cloud.style.top = Math.random() * 100 + 'vh';
+        cloud.style.left = Math.random() * 100 + 'vw';
+        cloud.style.animationDelay = Math.random() * 10 + 's';
+        world.appendChild(cloud);
     }
-    createClouds();
 
-    const container = document.getElementById('airplane-container');
-    const model = document.querySelector('.plane-model');
+    const wrapper = document.getElementById('plane-wrapper');
+    const model = document.getElementById('plane-model');
 
-    function fly(step, skyColor) {
-        document.getElementById('sky').style.background = skyColor;
+    function fly(step) {
         document.querySelector('.card.active').classList.remove('active');
 
-        // 3D Perspective Movements
-        const movements = [
-            { left: '20%', top: '40%', rotZ: '15deg', rotX: '20deg' },
-            { left: '55%', top: '60%', rotZ: '-10deg', rotX: '-10deg' },
-            { left: '85%', top: '30%', rotZ: '10deg', rotX: '15deg' },
-            { left: '50%', top: '75%', rotZ: '0deg', rotX: '0deg' }
+        // Dynamic 3D Flight Path
+        const paths = [
+            { left: '20%', top: '40%', rZ: '15deg', rX: '25deg' },
+            { left: '60%', top: '30%', rZ: '-10deg', rX: '-15deg' },
+            { left: '80%', top: '60%', rZ: '20deg', rX: '30deg' },
+            { left: '50%', top: '75%', rZ: '0deg', rX: '0deg' }
         ];
 
-        const m = movements[step-1];
-        container.style.left = m.left;
-        container.style.top = m.top;
-        model.style.transform = `rotateZ(${m.rotZ}) rotateX(${m.rotX})`;
+        const p = paths[step-1];
+        wrapper.style.left = p.left;
+        wrapper.style.top = p.top;
+        model.style.transform = `rotateZ(${p.rZ}) rotateX(${p.rX})`;
 
         setTimeout(() => {
             document.getElementById('stop' + step).classList.add('active');
         }, 3500);
     }
 
-    const giftData = {
-        1: "Teddy & Rose: For the moments that deserve to stay soft.",
-        2: "Special Dress: For the one who carries herself with grace.",
-        3: "Scented Magic: To match the calm energy you bring.",
-        4: "RC HotWheels: Because our bond is 'Mass' and fast."
+    const giftInfo = {
+        1: { icon: "🧸🌹", name: "The Sentimental Teddy", desc: "A teddy that gives you a rose, because some feelings never fade." },
+        2: { icon: "👗✨", name: "The Elegant Drape", desc: "A dress that flows with life, matching your graceful energy." },
+        3: { icon: "🕯️💎", name: "The Eternal Glow", desc: "A candle that never dims, just like our new connection." },
+        4: { icon: "🏎️💨", name: "HotWheels Performance", desc: "An RC car with raw power. Our bond is 'Mass' and moving fast." }
     };
 
-    function reveal(id) {
-        document.getElementById('gift-icon').innerText = "🎁";
-        document.getElementById('gift-text').innerText = giftData[id];
+    function revealGift(id) {
+        const g = giftInfo[id];
+        document.getElementById('gift-visual').innerText = g.icon;
+        document.getElementById('gift-name').innerText = g.name;
+        document.getElementById('gift-desc').innerText = g.desc;
+        
         document.querySelector('.card.active').classList.remove('active');
         setTimeout(() => {
             document.getElementById('stop5').classList.add('active');
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.8 } });
-        }, 500);
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 }, colors: ['#fcc419', '#ffffff'] });
+        }, 600);
     }
 
-    function blow() {
-        confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
-        document.getElementById('cake').innerHTML = "💨";
+    function blowCake() {
+        confetti({ particleCount: 400, spread: 100, origin: { y: 0.6 } });
+        const btn = document.getElementById('cake-btn');
+        btn.innerHTML = "💨";
         setTimeout(() => {
-            document.getElementById('cake').style.display = 'none';
-            document.getElementById('final').style.display = 'block';
+            btn.style.display = 'none';
+            document.getElementById('final-wish').style.display = 'block';
         }, 800);
     }
 
-    // Initial positioning
-    setTimeout(() => { container.style.left = '20%'; }, 500);
-
+    // Launch
+    setTimeout(() => { wrapper.style.left = '20%'; }, 500);
 </script>
 </body>
 </html>
