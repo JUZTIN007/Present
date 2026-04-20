@@ -40,7 +40,6 @@ button {
   cursor:pointer;
   margin:10px;
 }
-
 button:hover {background:#c9184a;}
 
 input {
@@ -51,7 +50,7 @@ input {
   text-align:center;
 }
 
-/* hearts */
+/* floating hearts */
 .heart {
   position:absolute;
   color:#ff4d6d;
@@ -110,9 +109,9 @@ input {
   <button onclick="nextStep(3)">Continue</button>
 </div>
 
-<!-- AVIATION FLOW -->
+<!-- EMOTIONAL FLOW -->
 <div id="step3" class="hidden">
-  <h2 id="aviation"></h2>
+  <h2 id="flow"></h2>
   <button onclick="nextStep(4)">Continue</button>
 </div>
 
@@ -132,7 +131,7 @@ input {
 
 <!-- MUSIC -->
 <div id="step6" class="hidden">
-  <h2>Listen to this 🎵</h2>
+  <h2>Just listen… 🎵</h2>
   <button onclick="playMusic()">Play</button>
   <audio id="music" loop>
     <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
@@ -142,7 +141,7 @@ input {
 <!-- FINAL -->
 <div id="step7" class="hidden">
   <h2>Happy Birthday ❤️</h2>
-  <p id="final"></p>
+  <div id="final"></div>
   <button onclick="confettiBlast()">Celebrate 🎉</button>
 </div>
 
@@ -153,7 +152,7 @@ input {
 <script>
 
 /* INTRO */
-let introText="I wanted to tell you something…";
+let introText="I wanted to show you something…";
 let i=0;
 function typeIntro(){
   if(i<introText.length){
@@ -168,7 +167,8 @@ typeIntro();
 function nextStep(n){
   document.querySelectorAll('.card > div').forEach(d=>d.classList.add('hidden'));
   document.getElementById('step'+n).classList.remove('hidden');
-  if(n==3) aviationText();
+
+  if(n==3) emotionalFlow();
   if(n==7) finalMessage();
 }
 
@@ -179,32 +179,21 @@ function check(){
   } else alert("Try again 😄");
 }
 
-/* MOMENTS TEXT */
+/* MOMENTS */
 const moments = [
-`I’ve been noticing something about you…
-
-You don’t try too hard…
+`You don’t even try too hard…
 but you still stand out 😄`,
 
-`There’s this quiet confidence in you…
+`There’s something calm about you…
+not loud… but noticeable 😌`,
 
-not loud… not obvious…  
-but it’s there 😌`,
-
-`Sometimes…
-
-you look at the sky differently ✈️  
+`You look at the sky differently ✈️  
 like you’re meant for more`,
 
-`And yeah…
-
-you say you're okay 😊  
-but I don’t always believe that 💔  
-
-still… you carry it well`
+`You say you're okay 😊  
+but I don’t always believe that 💔`
 ];
 
-/* SHOW MEMORY */
 function showMemory(i){
   let p=document.getElementById('popup');
   p.innerText= moments[i-1];
@@ -212,31 +201,84 @@ function showMemory(i){
   setTimeout(()=>p.style.display="none",3000);
 }
 
-/* AVIATION TEXT */
-function aviationText(){
-  let text=`There’s something about you…
+/* EMOTIONAL FLOW */
+function emotionalFlow(){
+  const lines = [
+    "There’s something about you…",
+    "",
+    "You don’t always say much…",
+    "but there’s a lot going on inside.",
+    "",
+    "And still…",
+    "you choose to smile.",
+    "",
+    "That’s not easy.",
+    "",
+    "That’s you."
+  ];
 
-You don’t always say much…
+  let i = 0;
+  const el = document.getElementById("flow");
+  el.innerHTML = "";
 
-but there’s a lot going on inside.
+  function showLine(){
+    if(i < lines.length){
+      let line = document.createElement("div");
+      line.style.opacity = 0;
+      line.style.transition = "opacity 1s";
+      line.innerText = lines[i];
+      el.appendChild(line);
 
-And still…
+      setTimeout(() => line.style.opacity = 1, 100);
 
-you choose to smile.
-
-That’s not easy.
-
-That’s you.`;
-
-  let j=0;
-  function type(){
-    if(j<text.length){
-      document.getElementById("aviation").innerHTML+=text.charAt(j);
-      j++;
-      setTimeout(type,40);
+      i++;
+      setTimeout(showLine, 1200);
     }
   }
-  type();
+  showLine();
+}
+
+/* FINAL MESSAGE */
+function finalMessage(){
+  const lines = [
+    "Happy Birthday…",
+    "",
+    "I didn’t make this to impress you.",
+    "",
+    "I made this because…",
+    "you’re someone I notice.",
+    "",
+    "Not loudly.",
+    "Not obviously.",
+    "",
+    "But in small ways.",
+    "",
+    "And I hope…",
+    "",
+    "this year…",
+    "you feel as okay inside…",
+    "as you make it look outside."
+  ];
+
+  let i = 0;
+  const el = document.getElementById("final");
+  el.innerHTML = "";
+
+  function showLine(){
+    if(i < lines.length){
+      let line = document.createElement("div");
+      line.style.opacity = 0;
+      line.style.transition = "opacity 1s";
+      line.innerText = lines[i];
+      el.appendChild(line);
+
+      setTimeout(() => line.style.opacity = 1, 100);
+
+      i++;
+      setTimeout(showLine, 1400);
+    }
+  }
+  showLine();
 }
 
 /* NO BUTTON */
@@ -255,34 +297,10 @@ function blow(){
 
 /* MUSIC */
 function playMusic(){
-  document.getElementById('music').play();
+  let m=document.getElementById('music');
+  m.volume=0.2;
+  m.play();
   nextStep(7);
-}
-
-/* FINAL */
-function finalMessage(){
-  let msg=`Happy Birthday…
-
-I didn’t make this to impress you.
-
-I made this because…
-
-you’re someone I notice.
-
-And I hope…
-
-this year makes you feel  
-as special as you actually are ✨`;
-
-  let k=0;
-  function type(){
-    if(k<msg.length){
-      document.getElementById("final").innerHTML+=msg.charAt(k);
-      k++;
-      setTimeout(type,40);
-    }
-  }
-  type();
 }
 
 /* CONFETTI */
