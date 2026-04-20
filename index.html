@@ -3,213 +3,261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flight 2504: The Journey ✈️</title>
+<title>Flight 2504: Mission Birthday</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
 <style>
     :root {
-        --sky-dark: #0a192f;
-        --neon-gold: #fcc419;
-        --cloud-white: rgba(255, 255, 255, 0.1);
+        --display-green: #00ff41;
+        --dim-green: rgba(0, 255, 65, 0.2);
+        --panel-black: #050505;
     }
 
     body, html {
         margin: 0; padding: 0; width: 100%; height: 100%;
-        font-family: 'Segoe UI', sans-serif;
-        background: #050a14;
-        color: white;
+        background-color: var(--panel-black);
+        font-family: 'Courier New', Courier, monospace;
+        color: var(--display-green);
         overflow: hidden;
     }
 
-    /* 🌌 Cinematic Background */
-    #sky {
+    /* 🌌 Deep Sky Background */
+    #atmosphere {
         position: fixed;
         width: 100%; height: 100%;
-        background: linear-gradient(to bottom, #050a14 0%, #1a2a6c 50%, #050a14 100%);
+        background: radial-gradient(circle at bottom, #0d1b2a 0%, #050505 100%);
         z-index: -1;
     }
 
-    /* ✈️ The Airplane */
+    /* ✈️ Vector Airplane */
     #airplane {
         position: absolute;
-        font-size: 40px;
-        left: -10%;
-        top: 50%;
-        transform: translateY(-50%) rotate(10deg);
-        transition: all 3s cubic-bezier(0.45, 0, 0.55, 1);
+        width: 60px; height: 60px;
+        left: -100px; top: 50%;
+        transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 100;
-        filter: drop-shadow(0 0 10px #fff);
+        filter: drop-shadow(0 0 8px var(--display-green));
     }
 
-    /* ☁️ Moving Clouds */
-    .cloud {
+    /* 🖥️ HUD / Telemetry UI */
+    .hud {
         position: absolute;
-        background: white;
-        border-radius: 50px;
-        opacity: 0.1;
-        animation: drift linear infinite;
+        top: 25px; left: 25px;
+        font-size: 13px;
+        letter-spacing: 1px;
+        line-height: 1.5;
+        border-left: 2px solid var(--display-green);
+        padding-left: 10px;
+        pointer-events: none;
     }
 
-    @keyframes drift {
-        from { transform: translateX(100vw); }
-        to { transform: translateX(-20vw); }
-    }
-
-    /* 📄 Story Cards */
-    .story-card {
+    .radar-circle {
         position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80%;
-        max-width: 350px;
-        background: rgba(10, 25, 47, 0.9);
-        padding: 30px;
-        border-radius: 15px;
-        border-left: 4px solid var(--neon-gold);
-        text-align: center;
+        bottom: 20px; right: 20px;
+        width: 80px; height: 80px;
+        border: 1px solid var(--dim-green);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.5; }
+        100% { transform: scale(1.2); opacity: 0; }
+    }
+
+    /* 📟 Tactical Terminal */
+    .terminal {
+        position: absolute;
+        bottom: 12%; left: 50%;
+        transform: translateX(-50%);
+        width: 85%; max-width: 420px;
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid var(--display-green);
+        padding: 25px;
+        border-radius: 2px;
+        box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
         opacity: 0;
         visibility: hidden;
-        transition: 1s;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        transition: opacity 1s, visibility 1s;
     }
 
-    .story-card.active { opacity: 1; visibility: visible; }
+    .terminal.active { opacity: 1; visibility: visible; }
 
-    h2 { color: var(--neon-gold); font-size: 18px; text-transform: uppercase; letter-spacing: 2px; }
-    p { font-size: 16px; line-height: 1.6; font-style: italic; color: #ccd6f6; }
+    .typewriter {
+        font-size: 15px;
+        line-height: 1.6;
+        min-height: 80px;
+        white-space: pre-wrap;
+    }
 
-    .btn {
-        background: transparent;
-        border: 1px solid var(--neon-gold);
-        color: var(--neon-gold);
-        padding: 10px 20px;
+    /* System Buttons */
+    .nav-btn {
+        background: var(--display-green);
+        color: black;
+        border: none;
+        padding: 12px 20px;
         margin-top: 20px;
         cursor: pointer;
+        font-family: inherit;
+        font-weight: bold;
         text-transform: uppercase;
-        font-size: 12px;
-        letter-spacing: 1px;
+        width: 100%;
+        letter-spacing: 2px;
+        transition: 0.3s;
     }
+    .nav-btn:hover { background: white; }
 
-    /* 🎁 Garage (Final) */
-    #garage { display: none; text-align: center; }
-    .garage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-    .box { background: #112240; padding: 25px; border: 1px solid #233554; border-radius: 10px; cursor: pointer; font-size: 30px; transition: 0.3s; }
-    .box:hover { border-color: var(--neon-gold); transform: scale(1.05); }
+    /* 📦 Payload Selection */
+    .payload-grid {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 12px; margin-top: 20px;
+    }
+    .crate {
+        border: 1px solid var(--dim-green);
+        padding: 15px; cursor: pointer;
+        font-size: 10px; text-align: center;
+        transition: 0.3s;
+    }
+    .crate:hover { background: var(--display-green); color: black; border-color: white; }
 
+    /* Celebration Mode */
+    #final-screen { text-align: center; }
+    .initiate-link {
+        color: white; text-decoration: underline; cursor: pointer;
+        font-size: 14px; display: block; margin-top: 20px;
+    }
 </style>
 </head>
 <body>
 
-<div id="sky"></div>
-<div id="airplane">✈️</div>
+<div id="atmosphere"></div>
+<div class="radar-circle"></div>
 
-<div id="stop1" class="story-card active">
-    <h2>Altitude: 10,000 ft</h2>
-    <p>"A year ago, the radar went silent. We were two different worlds, orbiting in a quiet void."</p>
-    <button class="btn" onclick="flyTo(2)">Continue Flight</button>
+<div class="hud">
+    FLIGHT: JZ-2504<br>
+    STATUS: <span id="status">INITIATING</span><br>
+    ALT: <span id="alt">00000</span> FT<br>
+    SPD: <span id="spd">000</span> KTS
 </div>
 
-<div id="stop2" class="story-card">
-    <h2>Altitude: 25,000 ft</h2>
-    <p>"Then, the frequency cleared. Silence turned into conversations, and strangers turned into... this."</p>
-    <button class="btn" onclick="flyTo(3)">Stay on Course</button>
+<div id="airplane">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 16L21 14L13 9L13 3.5C13 2.67 12.33 2 11.5 2C10.67 2 10 2.67 10 3.5L10 9L2 14L2 16L10 13.5L10 19L8 20.5L8 22L11.5 21L15 22L15 20.5L13 19L13 13.5L21 16Z" fill="#00ff41"/>
+    </svg>
 </div>
 
-<div id="stop3" class="story-card">
-    <h2>Altitude: 38,000 ft</h2>
-    <p>"Knowing you now feels like finding a tailwind. The journey is better when the connection is real."</p>
-    <button class="btn" onclick="flyTo(4)">Final Approach</button>
+<div id="step1" class="terminal active">
+    <div class="typewriter" id="text1"></div>
+    <button class="nav-btn" id="btn1" style="display:none;" onclick="flyTo(2, '18500', '420')">Engage Thrusters</button>
 </div>
 
-<div id="stop4" class="story-card">
-    <h2>Final Destination: Garage</h2>
-    <p>Runway clear. Choose your birthday crate to land.</p>
-    <div class="garage-grid">
-        <div class="box" onclick="showFinal(1)">📦</div>
-        <div class="box" onclick="showFinal(2)">📦</div>
-        <div class="box" onclick="showFinal(3)">📦</div>
-        <div class="box" onclick="showFinal(4)">📦</div>
+<div id="step2" class="terminal">
+    <div class="typewriter" id="text2"></div>
+    <button class="nav-btn" id="btn2" style="display:none;" onclick="flyTo(3, '34000', '580')">Hold Course</button>
+</div>
+
+<div id="step3" class="terminal">
+    <div class="typewriter" id="text3"></div>
+    <button class="nav-btn" id="btn3" style="display:none;" onclick="flyTo(4, '00000', '000')">Execute Landing</button>
+</div>
+
+<div id="step4" class="terminal">
+    <div style="font-size: 14px; margin-bottom: 10px;">TARGET REACHED. SELECT PAYLOAD:</div>
+    <div class="payload-grid">
+        <div class="crate" onclick="revealFinal('CRATE_01: Teddy & Rose')">SECURE CARGO 01</div>
+        <div class="crate" onclick="revealFinal('CRATE_02: Special Dress')">SECURE CARGO 02</div>
+        <div class="crate" onclick="revealFinal('CRATE_03: Scented Candles')">SECURE CARGO 03</div>
+        <div class="crate" onclick="revealFinal('CRATE_04: RC HotWheels')">SECURE CARGO 04</div>
     </div>
 </div>
 
-<div id="stop5" class="story-card">
-    <div id="gift-reveal" style="font-size: 50px; margin-bottom: 10px;"></div>
-    <p id="gift-text"></p>
-    <hr style="border: 0.5px solid #233554; margin: 20px 0;">
-    <div style="font-size: 60px; cursor: pointer;" onclick="blowCake()">🎂</div>
-    <p style="font-size: 12px; color: var(--neon-gold);">Tap the cake to blow the candles</p>
-    <div id="final-msg" style="display:none; margin-top: 20px; font-weight: bold;">
-        Happy Birthday! <br> Glad we found our way back. ❤️
+<div id="step5" class="terminal" id="final-screen">
+    <div id="selected-cargo" style="color: white; margin-bottom: 15px;"></div>
+    <div class="typewriter" id="text-final"></div>
+    <span class="initiate-link" id="celebrate-btn" style="display:none;" onclick="celebrate()">[ START_CELEBRATION_SEQUENCE ]</span>
+    <div id="final-wish" style="display:none; margin-top: 20px; font-weight: bold; border-top: 1px solid var(--dim-green); padding-top: 15px;">
+        HAPPY BIRTHDAY. <br> GLAD WE'RE BACK ON THE SAME RADAR. ❤️
     </div>
 </div>
 
 <script>
-    // Create random clouds
-    for (let i = 0; i < 8; i++) {
-        let cloud = document.createElement('div');
-        cloud.className = 'cloud';
-        cloud.style.width = Math.random() * 100 + 50 + 'px';
-        cloud.style.height = Math.random() * 30 + 20 + 'px';
-        cloud.style.top = Math.random() * 100 + 'vh';
-        cloud.style.animationDuration = Math.random() * 10 + 5 + 's';
-        cloud.style.animationDelay = Math.random() * 5 + 's';
-        document.body.appendChild(cloud);
+    const plane = document.getElementById('airplane');
+    
+    function typeEffect(elementId, text, speed, callback) {
+        let i = 0;
+        const el = document.getElementById(elementId);
+        el.innerHTML = "";
+        function type() {
+            if (i < text.length) {
+                el.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            } else if (callback) {
+                callback();
+            }
+        }
+        type();
     }
 
-    const plane = document.getElementById('airplane');
-    const positions = [
-        { left: '20%', top: '40%', rotate: '10deg' },
-        { left: '50%', top: '60%', rotate: '-5deg' },
-        { left: '80%', top: '30%', rotate: '15deg' },
-        { left: '110%', top: '50%', rotate: '0deg' }
-    ];
+    // Phase 1: Intro
+    setTimeout(() => {
+        plane.style.left = '15%';
+        typeEffect('text1', "COMMUNICATION ESTABLISHED...\n\nA year of radio silence is over. Flight 2504 is cleared for departure. Ready to leave the ground?", 40, () => {
+            document.getElementById('btn1').style.display = 'block';
+        });
+    }, 800);
 
-    function flyTo(step) {
-        // Hide current card
-        document.querySelector('.story-card.active').classList.remove('active');
+    function flyTo(step, alt, spd) {
+        // Update HUD
+        document.getElementById('status').innerText = (step === 4) ? "LANDED" : "IN FLIGHT";
+        document.getElementById('alt').innerText = alt;
+        document.getElementById('spd').innerText = spd;
+
+        // Reset Terminal
+        document.querySelectorAll('.terminal').forEach(t => t.classList.remove('active'));
         
-        // Move plane
-        const pos = positions[step-2];
+        // Plane Trajectory
+        const trajectory = [
+            { left: '20%', top: '45%', rot: '15deg' },
+            { left: '50%', top: '30%', rot: '0deg' },
+            { left: '80%', top: '60%', rot: '10deg' },
+            { left: '45%', top: '75%', rot: '0deg' }
+        ];
+        const pos = trajectory[step-1];
         plane.style.left = pos.left;
         plane.style.top = pos.top;
-        plane.style.transform = `translateY(-50%) rotate(${pos.rotate})`;
+        plane.style.transform = `rotate(${pos.rot})`;
 
-        // Show next card after delay
+        // Terminal Updates
         setTimeout(() => {
-            document.getElementById('stop' + step).classList.add('active');
-        }, 3000);
+            document.getElementById('step' + step).classList.add('active');
+            if(step === 2) {
+                typeEffect('text2', "CRUISING ALTITUDE REACHED.\n\nStrange how we drifted like lost signals for so long. I'm glad we found our frequency again.", 40, () => {
+                    document.getElementById('btn2').style.display = 'block';
+                });
+            } else if(step === 3) {
+                typeEffect('text3', "APPROACHING DESTINATION.\n\nNo matter the turbulence behind us, the landing looks smooth. Let's touch down.", 40, () => {
+                    document.getElementById('btn3').style.display = 'block';
+                });
+            }
+        }, 3500);
     }
 
-    const gifts = {
-        1: { emoji: "🧸🌹", text: "A Teddy & Rose: For the moments that deserve to stay soft." },
-        2: { emoji: "👗✨", text: "A Special Dress: For the person who carries herself with grace." },
-        3: { emoji: "🕯️💎", text: "Scented Magic: To match the calm energy you bring." },
-        4: { emoji: "🏎️💨", text: "RC HotWheels: Because our bond is 'Mass' and fast." }
-    };
-
-    function showFinal(choice) {
-        const g = gifts[choice];
-        document.getElementById('gift-reveal').innerText = g.emoji;
-        document.getElementById('gift-text').innerText = g.text;
-        
-        document.querySelector('.story-card.active').classList.remove('active');
-        setTimeout(() => {
-            document.getElementById('stop5').classList.add('active');
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.8 } });
-        }, 500);
+    function revealFinal(cargo) {
+        document.getElementById('step4').classList.remove('active');
+        document.getElementById('step5').classList.add('active');
+        document.getElementById('selected-cargo').innerText = "SYSTEM: " + cargo;
+        typeEffect('text-final', "Mission successful. The runway is yours. One last protocol remains...", 50, () => {
+            document.getElementById('celebrate-btn').style.display = 'block';
+        });
     }
 
-    function blowCake() {
-        confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
-        document.getElementById('final-msg').style.display = 'block';
+    function celebrate() {
+        confetti({ particleCount: 250, spread: 100, origin: { y: 0.8 }, colors: ['#00ff41', '#ffffff'] });
+        document.getElementById('celebrate-btn').style.display = 'none';
+        document.getElementById('final-wish').style.display = 'block';
     }
-
-    // Initial plane position
-    setTimeout(() => {
-        plane.style.left = '20%';
-        plane.style.top = '40%';
-    }, 500);
-
 </script>
+
 </body>
 </html>
