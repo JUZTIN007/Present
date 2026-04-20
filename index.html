@@ -1,122 +1,292 @@
 <!DOCTYPE html>
-<html lang="ta">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBD My Special One ❤️</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <style>
-        :root { --pink: #ff4d6d; --dark-pink: #c9184a; --bg: #fff0f3; }
-        body { background-color: var(--bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2); width: 85%; max-width: 400px; text-align: center; position: relative; min-height: 300px; display: flex; flex-direction: column; justify-content: center; }
-        .hidden { display: none; }
-        h2 { color: var(--dark-pink); margin-bottom: 20px; }
-        p { color: #555; line-height: 1.6; }
-        input { padding: 12px; border: 2px solid var(--pink); border-radius: 10px; width: 80%; margin-bottom: 15px; outline: none; font-size: 16px; text-align: center; }
-        button { background: var(--pink); color: white; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; transition: 0.3s; margin: 10px auto; width: fit-content; }
-        button:hover { background: var(--dark-pink); transform: scale(1.05); }
-        #no-btn { position: absolute; transition: 0.1s; z-index: 100; }
-        .memory-chip { background: #ffe5ec; padding: 10px; margin: 5px; border-radius: 10px; cursor: pointer; display: inline-block; font-size: 14px; }
-        #final-msg { font-style: italic; white-space: pre-line; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Someone Special ❤️</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+<style>
+:root { --pink:#ff4d6d; --dark:#c9184a; }
+
+body {
+  margin:0;
+  font-family:'Segoe UI';
+  background: linear-gradient(135deg,#fff0f3,#ffe5ec);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  overflow:hidden;
+}
+
+.card {
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  width:90%;
+  max-width:420px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  position:relative;
+}
+
+.hidden {display:none;}
+
+button {
+  background:var(--pink);
+  color:white;
+  border:none;
+  padding:10px 20px;
+  border-radius:20px;
+  cursor:pointer;
+  margin:10px;
+}
+
+button:hover {background:var(--dark);}
+
+input {
+  padding:10px;
+  border:2px solid var(--pink);
+  border-radius:10px;
+  width:70%;
+  text-align:center;
+}
+
+/* Floating hearts */
+.heart {
+  position:absolute;
+  color:#ff4d6d;
+  animation: float 5s linear infinite;
+}
+@keyframes float {
+  0% {transform:translateY(0); opacity:1;}
+  100% {transform:translateY(-100vh); opacity:0;}
+}
+
+/* Popup */
+#popup {
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+</style>
 </head>
+
 <body>
 
-    <div class="card">
-        <div id="step1">
-            <h2>Halt! 🛑</h2>
-            <p>Enter the 4-digit code (DDMM) to see your surprise!</p>
-            <input type="text" id="passcode" placeholder="Hint: Your B'day">
-            <br>
-            <button onclick="checkPass()">Unlock 🔑</button>
-        </div>
+<div class="card">
 
-        <div id="step2" class="hidden">
-            <h2>Memories Box 📸</h2>
-            <p>Click each to remember...</p>
-            <div class="memory-chip" onclick="alert('That first tea we had together! ☕')">Moment 1</div>
-            <div class="memory-chip" onclick="alert('The 2-hour long phone call! 📞')">Moment 2</div>
-            <div class="memory-chip" onclick="alert('That silly fight we had! 😂')">Moment 3</div>
-            <br><button onclick="nextStep(3)">Next Surprise ✨</button>
-        </div>
+<!-- INTRO -->
+<div id="step0">
+  <h2 id="intro-text"></h2>
+  <button onclick="nextStep(1)">Start ❤️</button>
+</div>
 
-        <div id="step3" class="hidden">
-            <h2>Simple Question...</h2>
-            <p>Am I your favorite person? 😇</p>
-            <button onclick="nextStep(4)">Yes, Always! ❤️</button>
-            <button id="no-btn" onmouseover="moveNo()">Nope!</button>
-        </div>
+<!-- PASSCODE -->
+<div id="step1" class="hidden">
+  <h2>Enter Secret Code 🔐</h2>
+  <p>Hint: Your Birthday</p>
+  <input id="pass">
+  <br>
+  <button onclick="check()">Unlock</button>
+</div>
 
-        <div id="step4" class="hidden">
-            <h2>Make a Wish! 🕯️</h2>
-            <div id="cake" style="font-size: 80px; cursor: pointer;" onclick="blowCandle()">🔥</div>
-            <p id="candle-text">Click the fire to blow it out!</p>
-        </div>
+<!-- MEMORIES -->
+<div id="step2" class="hidden">
+  <h2>Memories 📸</h2>
+  <button onclick="showMemory('That first tea ☕')">Moment 1</button>
+  <button onclick="showMemory('Our long call 📞')">Moment 2</button>
+  <button onclick="showMemory('That funny fight 😂')">Moment 3</button>
+  <br>
+  <button onclick="nextStep(3)">Next</button>
+</div>
 
-        <div id="step5" class="hidden">
-            <h2>A Special Tune 🎵</h2>
-            <p>I picked a song just for you!</p>
-            <button onclick="playMusic()">Play My Song 🎧</button>
-            <audio id="bg-music" loop>
-                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-            </audio>
-        </div>
+<!-- AVIATION + PERSONALITY -->
+<div id="step3" class="hidden">
+  <h2>Something I Know About You ✨</h2>
 
-        <div id="step6" class="hidden">
-            <h2>Happy Birthday! 🎂</h2>
-            <p id="final-msg">
-                Dear [Her Name],
-                
-                You are the most amazing person I know. 
-                Happy 25th April! May this year bring you 
-                all the happiness you deserve.
-                
-                Keep smiling always! ✨
-            </p>
-            <button onclick="startConfetti()">More Love! ❤️</button>
-        </div>
-    </div>
+  <p>✈️ You love the sky more than anything...</p>
+  <p>🚗 And those tiny Hot Wheels? Still your favorite 😄</p>
 
-    <script>
-        function nextStep(n) {
-            document.querySelectorAll('.card > div').forEach(div => div.classList.add('hidden'));
-            document.getElementById('step' + n).classList.remove('hidden');
-            if(n === 6) startConfetti();
-        }
+  <p style="margin-top:15px;">
+    Konjam self-obsessed 😌 <br>
+    Konjam childish 🧸 <br>
+    But honestly… romba cute ❤️
+  </p>
 
-        function checkPass() {
-            if(document.getElementById('passcode').value === "2504") nextStep(2);
-            else alert("Thappa podura macha! Try again.");
-        }
+  <p style="margin-top:15px; font-style:italic;">
+    I know something about you…<br>
+    You smile outside 😊 <br>
+    But inside… not always the same 💔
+  </p>
 
-        function moveNo() {
-            const btn = document.getElementById('no-btn');
-            const x = Math.random() * (window.innerWidth - 150);
-            const y = Math.random() * (window.innerHeight - 150);
-            btn.style.left = x + 'px';
-            btn.style.top = y + 'px';
-        }
+  <p>
+    Still… you stay strong 😇 <br>
+    That’s what makes you special ✨
+  </p>
 
-        function blowCandle() {
-            document.getElementById('cake').innerHTML = "🎂";
-            document.getElementById('candle-text').innerText = "Wish granted! 🎉";
-            setTimeout(() => nextStep(5), 2000);
-        }
+  <div style="font-size:35px;margin:10px; animation: fly 5s linear infinite;">
+    ✈️
+  </div>
 
-        function playMusic() {
-            const music = document.getElementById('bg-music');
-            music.play();
-            nextStep(6);
-        }
+  <div style="font-size:30px;">🏎️💨</div>
 
-        function startConfetti() {
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ff758f', '#ffb3c1']
-            });
-        }
-    </script>
+  <button onclick="nextStep(4)">Continue ❤️</button>
+</div>
+
+<!-- QUESTION -->
+<div id="step4" class="hidden">
+  <h2>One Question 😇</h2>
+  <p>Am I your favorite?</p>
+  <button onclick="nextStep(5)">Yes ❤️</button>
+  <button id="no" onmouseover="moveNo()">No 😜</button>
+</div>
+
+<!-- CAKE -->
+<div id="step5" class="hidden">
+  <h2>Make a Wish 🎂</h2>
+  <div onclick="blow()" style="font-size:70px;cursor:pointer;">🔥</div>
+  <p>Tap to blow candle</p>
+</div>
+
+<!-- MUSIC -->
+<div id="step6" class="hidden">
+  <h2>Special Song 🎵</h2>
+  <button onclick="playMusic()">Play</button>
+  <audio id="music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+  </audio>
+</div>
+
+<!-- FINAL -->
+<div id="step7" class="hidden">
+  <h2>Happy Birthday 🎉</h2>
+  <p id="final"></p>
+  <button onclick="confettiBlast()">Celebrate 🎆</button>
+</div>
+
+</div>
+
+<div id="popup"></div>
+
+<script>
+
+/* INTRO TYPE */
+let text="I made something special for you... ❤️";
+let i=0;
+function typeIntro(){
+  if(i<text.length){
+    document.getElementById("intro-text").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeIntro,50);
+  }
+}
+typeIntro();
+
+/* STEP CONTROL */
+function nextStep(n){
+  document.querySelectorAll('.card > div').forEach(d=>d.classList.add('hidden'));
+  document.getElementById('step'+n).classList.remove('hidden');
+  if(n==7) typingMessage();
+}
+
+/* PASSCODE */
+function check(){
+  let val=document.getElementById('pass').value;
+  if(val==="2504") nextStep(2);
+  else alert("Wrong 😜 Try again!");
+}
+
+/* MEMORY */
+function showMemory(text){
+  let p=document.getElementById('popup');
+  p.innerHTML=text;
+  p.style.display="block";
+  setTimeout(()=>p.style.display="none",2000);
+}
+
+/* NO BUTTON */
+let msgs=["Are you sure? 😢","Think again 👀","Really? 😏"];
+let idx=0;
+function moveNo(){
+  let btn=document.getElementById('no');
+  btn.style.position='absolute';
+  btn.style.left=Math.random()*300+"px";
+  btn.style.top=Math.random()*300+"px";
+  btn.innerText=msgs[idx%msgs.length];
+  idx++;
+}
+
+/* CAKE */
+function blow(){
+  document.querySelector('#step5 div').innerHTML="🎂";
+  setTimeout(()=>nextStep(6),1500);
+}
+
+/* MUSIC */
+function playMusic(){
+  document.getElementById('music').play();
+  nextStep(7);
+}
+
+/* FINAL MESSAGE */
+function typingMessage(){
+  let msg=`Dear ❤️,
+
+Happy Birthday!
+
+You are honestly one of the most special people.
+
+Stay happy... keep smiling 😊
+
+No matter what happens,
+I’ll always wish the best for you ✨`;
+
+  let j=0;
+  function type(){
+    if(j<msg.length){
+      document.getElementById("final").innerHTML += msg.charAt(j);
+      j++;
+      setTimeout(type,40);
+    }
+  }
+  type();
+}
+
+/* CONFETTI */
+function confettiBlast(){
+  confetti({particleCount:200,spread:80});
+}
+
+/* HEARTS */
+setInterval(()=>{
+  let heart=document.createElement("div");
+  heart.className="heart";
+  heart.innerHTML="❤️";
+  heart.style.left=Math.random()*100+"vw";
+  heart.style.fontSize=Math.random()*20+10+"px";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),5000);
+},500);
+
+/* PLANE ANIMATION */
+const style=document.createElement('style');
+style.innerHTML=`
+@keyframes fly {
+  0% {transform: translateX(-150px);}
+  100% {transform: translateX(300px);}
+}`;
+document.head.appendChild(style);
+
+</script>
+
 </body>
 </html>
