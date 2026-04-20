@@ -1,0 +1,40 @@
+body {
+    margin:0;
+    font-family: 'Poppins', sans-serif;
+    background:black;
+    color:white;
+}
+
+.center {
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    text-align:center;
+}
+
+.overlay {
+    position:absolute;
+    bottom:20%;
+    left:50%;
+    transform:translateX(-50%);
+    width:80%;
+    max-width:500px;
+    background:rgba(0,0,0,0.6);
+    padding:30px;
+    border-radius:20px;
+}
+
+p {
+    line-height:1.8;
+    font-size:18px;
+}
+
+button {
+    margin-top:20px;
+    padding:10px 20px;
+    border:none;
+    background:white;
+    color:black;
+}
