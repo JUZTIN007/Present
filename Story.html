@@ -4,17 +4,19 @@
 <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="center">
 
-<audio id="music" loop>
-<source src="music.mp3">
-</audio>
+<p id="text">There was a time… we stopped talking.</p>
 
-<div class="overlay">
-<p id="text"></p>
 <button onclick="next()">Continue</button>
-</div>
 
 <script src="script.js"></script>
+
+<script>
+function next(){
+    window.location.href = "final.html";
+}
+</script>
+
 </body>
 </html>
