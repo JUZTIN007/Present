@@ -1,6 +1,6 @@
 body {
     margin:0;
-    font-family: 'Poppins', sans-serif;
+    font-family: Arial;
     background:black;
     color:white;
 }
@@ -11,24 +11,6 @@ body {
     justify-content:center;
     align-items:center;
     height:100vh;
-    text-align:center;
-}
-
-.overlay {
-    position:absolute;
-    bottom:20%;
-    left:50%;
-    transform:translateX(-50%);
-    width:80%;
-    max-width:500px;
-    background:rgba(0,0,0,0.6);
-    padding:30px;
-    border-radius:20px;
-}
-
-p {
-    line-height:1.8;
-    font-size:18px;
 }
 
 button {
@@ -37,4 +19,5 @@ button {
     border:none;
     background:white;
     color:black;
+    cursor:pointer;
 }
