@@ -11,13 +11,12 @@
 /* 🌌 Animated Background */
 body {
   margin:0;
-  font-family:'Segoe UI';
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
   overflow:hidden;
-
   background: linear-gradient(-45deg, #ffdde1, #ee9ca7, #fbc2eb, #a6c1ee);
   background-size: 400% 400%;
   animation: gradientMove 12s ease infinite;
@@ -29,51 +28,86 @@ body {
   100% {background-position:0% 50%;}
 }
 
-/* ✨ Card */
+/* ✨ Glassmorphism Card */
 .card {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.85);
   backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   padding:30px;
   border-radius:20px;
   width:90%;
   max-width:420px;
   text-align:center;
-  box-shadow: 
-    0 10px 30px rgba(0,0,0,0.2),
-    0 0 20px rgba(255,77,109,0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 0.5s ease;
 }
 
-.hidden {display:none;}
+.hidden {display:none; opacity: 0;}
 
 button {
   background:#ff4d6d;
   color:white;
   border:none;
-  padding:10px 20px;
-  border-radius:20px;
+  padding:12px 25px;
+  border-radius:25px;
   cursor:pointer;
   margin:10px;
+  font-weight: 600;
+  transition: transform 0.2s, background 0.2s;
 }
-button:hover {background:#c9184a;}
+button:hover {background:#c9184a; transform: scale(1.05);}
 
 input {
-  padding:10px;
+  padding:12px;
   border:2px solid #ff4d6d;
   border-radius:10px;
   width:70%;
   text-align:center;
+  font-size: 16px;
+  outline: none;
 }
+
+/* 💭 Moments Buttons */
+.moment-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.moment-btn {
+  width: 85%;
+  background: rgba(255, 77, 109, 0.05) !important;
+  color: #ff4d6d !important;
+  border: 2px solid #ff4d6d !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.moment-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: rotate(45deg);
+  transition: 0.5s;
+}
+
+.moment-btn:hover::after { left: 100%; }
 
 /* ❤️ Floating hearts */
 .heart {
   position:absolute;
   color:#ff4d6d;
   animation: float 5s linear infinite;
+  z-index: -1;
 }
 @keyframes float {
-  0% {transform:translateY(0); opacity:1;}
-  100% {transform:translateY(-100vh); opacity:0;}
+  0% {transform:translateY(0) scale(1); opacity:1;}
+  100% {transform:translateY(-100vh) scale(1.5); opacity:0;}
 }
 
 /* 💭 Popup */
@@ -83,11 +117,14 @@ input {
   left:50%;
   transform:translate(-50%,-50%);
   background:white;
-  padding:20px;
+  padding:25px;
   border-radius:15px;
   display:none;
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+  box-shadow:0 15px 35px rgba(0,0,0,0.2);
   white-space:pre-line;
+  z-index: 100;
+  width: 80%;
+  max-width: 300px;
 }
 </style>
 </head>
@@ -95,95 +132,83 @@ input {
 <body>
 
 <div class="card">
+  <div id="step0">
+    <h2 id="intro"></h2>
+    <button onclick="nextStep(1)">Start</button>
+  </div>
 
-<!-- INTRO -->
-<div id="step0">
-  <h2 id="intro"></h2>
-  <button onclick="nextStep(1)">Start</button>
-</div>
+  <div id="step1" class="hidden">
+    <h2>Enter Code 🔐</h2>
+    <p style="font-size: 14px; color: #666;">Hint: Your Birthday (DDMM)</p>
+    <input id="pass" placeholder="Ex: 2504">
+    <br>
+    <button onclick="check()">Unlock</button>
+  </div>
 
-<!-- PASSCODE -->
-<div id="step1" class="hidden">
-  <h2>Enter Code 🔐</h2>
-  <p>Hint: Your Birthday</p>
-  <input id="pass">
-  <br>
-  <button onclick="check()">Unlock</button>
-</div>
+  <div id="step2" class="hidden">
+    <h2>Something about you…</h2>
+    <div class="moment-container">
+      <button class="moment-btn" onclick="showMemory(1)">Who are you? 🤔</button>
+      <button class="moment-btn" onclick="showMemory(2)">What I see... 👀</button>
+      <button class="moment-btn" onclick="showMemory(3)">The hidden side 🔍</button>
+      <button class="moment-btn" onclick="showMemory(4)">Just a truth 💡</button>
+    </div>
+    <br>
+    <button onclick="nextStep(3)" style="background: #333; margin-top: 15px;">Continue</button>
+  </div>
 
-<!-- MOMENTS -->
-<div id="step2" class="hidden">
-  <h2>Something about you…</h2>
+  <div id="step3" class="hidden">
+    <div id="flow" style="line-height: 1.6; font-style: italic;"></div>
+    <button onclick="nextStep(4)" style="margin-top: 20px;">Continue</button>
+  </div>
 
-  <button onclick="showMemory(1)">Moment 1</button>
-  <button onclick="showMemory(2)">Moment 2</button>
-  <button onclick="showMemory(3)">Moment 3</button>
-  <button onclick="showMemory(4)">Moment 4</button>
+  <div id="step4" class="hidden">
+    <h2>One question…</h2>
+    <p>Am I your favorite?</p>
+    <button onclick="nextStep(5)">Yes ❤️</button>
+    <button id="no" onmouseover="moveNo()">No 😜</button>
+  </div>
 
-  <br>
-  <button onclick="nextStep(3)">Continue</button>
-</div>
+  <div id="step5" class="hidden">
+    <h2>Make a wish 🎂</h2>
+    <div onclick="blow()" style="font-size:70px; cursor:pointer;">🔥</div>
+    <div id="wish-subtitle"></div>
+  </div>
 
-<!-- EMOTIONAL FLOW -->
-<div id="step3" class="hidden">
-  <div id="flow"></div>
-  <button onclick="nextStep(4)">Continue</button>
-</div>
+  <div id="step6" class="hidden">
+    <h2>Just listen… 🎵</h2>
+    <p style="font-size: 13px;">Turn up the volume</p>
+    <button onclick="playMusic()">Play & Reveal</button>
+    <audio id="music" loop>
+      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+    </audio>
+  </div>
 
-<!-- QUESTION -->
-<div id="step4" class="hidden">
-  <h2>One question…</h2>
-  <p>Am I your favorite?</p>
-  <button onclick="nextStep(5)">Yes ❤️</button>
-  <button id="no" onmouseover="moveNo()">No 😜</button>
-</div>
-
-<!-- CAKE -->
-<div id="step5" class="hidden">
-  <h2>Make a wish 🎂</h2>
-  <div onclick="blow()" style="font-size:70px;cursor:pointer;">🔥</div>
-</div>
-
-<!-- MUSIC -->
-<div id="step6" class="hidden">
-  <h2>Just listen… 🎵</h2>
-  <button onclick="playMusic()">Play</button>
-  <audio id="music" loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
-  </audio>
-</div>
-
-<!-- FINAL -->
-<div id="step7" class="hidden">
-  <h2>Happy Birthday ❤️</h2>
-  <div id="final"></div>
-  <button onclick="confettiBlast()">Celebrate 🎉</button>
-</div>
-
+  <div id="step7" class="hidden">
+    <div id="final" style="line-height: 1.6; font-weight: 500;"></div>
+    <button onclick="confettiBlast()" style="margin-top: 20px;">Celebrate 🎉</button>
+  </div>
 </div>
 
 <div id="popup"></div>
 
 <script>
+let clickedMoments = new Set();
 
-/* 🎧 Start music softly on first click */
+/* 🎧 Music Setup */
 window.onload = () => {
   let music = document.getElementById("music");
-  music.volume = 0.15;
-
-  document.body.addEventListener("click", () => {
-    music.play().catch(()=>{});
-  }, { once: true });
+  music.volume = 0.2;
 };
 
-/* ✨ INTRO */
+/* ✨ TYPEWRITER INTRO */
 let introText="Hey… just stay for a minute.";
 let i=0;
 function typeIntro(){
   if(i<introText.length){
     document.getElementById("intro").innerHTML+=introText.charAt(i);
     i++;
-    setTimeout(typeIntro,50);
+    setTimeout(typeIntro,60);
   }
 }
 typeIntro();
@@ -195,68 +220,65 @@ function nextStep(n){
     current.style.opacity = 0;
     setTimeout(()=>{
       current.classList.add('hidden');
-
       let next = document.getElementById('step'+n);
       next.classList.remove('hidden');
-      next.style.opacity = 0;
-
-      setTimeout(()=> next.style.opacity = 1,100);
-    },400);
+      setTimeout(()=> next.style.opacity = 1, 50);
+    }, 400);
   }
-
   if(n==3) emotionalFlow();
   if(n==7) finalMessage();
 }
 
-/* 🔐 PASSCODE */
+/* 🔐 PASSCODE CHECK */
 function check(){
   if(document.getElementById('pass').value==="2504"){
     nextStep(2);
-  } else alert("Try again 😄");
+  } else alert("Nijamave un bday maranthutiya? 😂 Try again!");
 }
 
-/* 💭 MOMENTS */
+/* 💭 MOMENTS CONTENT */
 const moments = [
-`You don’t try too hard…
-but you still stand out.`,
-
-`There’s something calm about you…
-not loud… but real.`,
-
-`You look at the sky differently ✈️  
-like you’re meant for more.`,
-
-`You say you're okay…
-but I don’t always believe that.`
+  `It took us a year to start talking... \nbut it only took a moment to realize you're special.`,
+  `The way we connect now... \nit feels like we're making up for all that lost time.`,
+  `I notice the little things about you... \nand honestly? They are my favorite parts.`,
+  `From 'not talking' to 'knowing each other'... \nthis is my favorite plot twist. 🔄`
 ];
 
 function showMemory(i){
+  clickedMoments.add(i);
   let p=document.getElementById('popup');
   p.innerText= moments[i-1];
   p.style.display="block";
-  setTimeout(()=>p.style.display="none",3000);
+  p.style.color = "black";
+
+  if(clickedMoments.size === 4) {
+    setTimeout(() => {
+       p.innerText = "Everything I said... \nI meant it. ✨";
+       p.style.color = "#ff4d6d";
+       p.style.fontWeight = "bold";
+    }, 2500);
+  }
+  setTimeout(()=>p.style.display="none", 5000);
 }
 
-/* 💔 EMOTIONAL FLOW */
+/* 💔 EMOTIONAL FLOW (THE STORY) */
 function emotionalFlow(){
   const lines = [
-    "There’s something about you…",
+    "A year ago...",
+    "we were just two people who didn't talk.",
     "",
-    "You don’t always say much…",
-    "but there’s a lot going on inside.",
+    "Funny how time works, right?",
     "",
-    "And still…",
-    "you choose to smile.",
+    "From silence...",
+    "to this beautiful connection we have now.",
     "",
-    "That’s not easy.",
+    "I’m glad we didn’t stay strangers.",
     "",
-    "That’s you."
+    "I'm glad it's you."
   ];
-
   let i = 0;
   const el = document.getElementById("flow");
   el.innerHTML = "";
-
   function showLine(){
     if(i < lines.length){
       let line = document.createElement("div");
@@ -264,10 +286,9 @@ function emotionalFlow(){
       line.style.transition = "opacity 1s";
       line.innerText = lines[i];
       el.appendChild(line);
-
-      setTimeout(()=> line.style.opacity = 1,100);
+      setTimeout(()=> line.style.opacity = 1, 100);
       i++;
-      setTimeout(showLine,1200);
+      setTimeout(showLine, 1300);
     }
   }
   showLine();
@@ -276,75 +297,77 @@ function emotionalFlow(){
 /* ❤️ FINAL MESSAGE */
 function finalMessage(){
   const lines = [
-    "Happy Birthday…",
+    "Happy Birthday...",
     "",
-    "I didn’t make this to impress you.",
+    "Looking back at where we were a year ago,",
+    "I never thought we'd be here today.",
     "",
-    "I made this because…",
-    "you’re someone I notice.",
+    "But some bonds are just meant to be found.",
     "",
-    "And I hope…",
+    "Thank you for being part of my life now...",
+    "and for making this connection so real.",
     "",
-    "this year…",
-    "you feel as okay inside…",
-    "as you make it look outside."
+    "I hope this year is as special for you...",
+    "as you are to me. ❤️",
+    "",
+    "Keep shining."
   ];
-
   let i = 0;
   const el = document.getElementById("final");
   el.innerHTML = "";
-
   function showLine(){
     if(i < lines.length){
       let line = document.createElement("div");
       line.style.opacity = 0;
-      line.style.transition = "opacity 1s";
+      line.style.transition = "opacity 1.2s";
       line.innerText = lines[i];
       el.appendChild(line);
-
-      setTimeout(()=> line.style.opacity = 1,100);
+      setTimeout(()=> line.style.opacity = 1, 100);
       i++;
-      setTimeout(showLine,1400);
+      setTimeout(showLine, 1600);
     }
   }
   showLine();
 }
 
-/* 😜 NO BUTTON */
+/* 😜 NO BUTTON MOVE */
 function moveNo(){
   let b=document.getElementById('no');
   b.style.position='absolute';
-  b.style.left=Math.random()*300+"px";
-  b.style.top=Math.random()*300+"px";
+  b.style.left=Math.random()*200+"px";
+  b.style.top=Math.random()*200+"px";
 }
 
-/* 🎂 CAKE */
+/* 🎂 CAKE BLOW */
 function blow(){
   document.querySelector('#step5 div').innerHTML="🎂";
-  setTimeout(()=>nextStep(6),1500);
+  let sub = document.getElementById("wish-subtitle");
+  sub.innerText = "One year of silence, but a lifetime of stories to tell now. ✨";
+  sub.style.fontSize = "13px";
+  sub.style.color = "#ff4d6d";
+  sub.style.marginTop = "15px";
+  setTimeout(()=>nextStep(6), 3000);
 }
 
-/* 🎵 MUSIC BUTTON */
 function playMusic(){
   document.getElementById('music').play();
   nextStep(7);
 }
 
-/* 🎉 CONFETTI */
 function confettiBlast(){
-  confetti({particleCount:200,spread:80});
+  confetti({particleCount:200, spread:80, origin: { y: 0.6 }});
 }
 
-/* ❤️ FLOATING HEARTS */
+/* ❤️ FLOATING HEARTS BACKGROUND */
 setInterval(()=>{
   let h=document.createElement("div");
   h.className="heart";
   h.innerHTML="❤️";
   h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=Math.random()*20+10+"px";
   document.body.appendChild(h);
-  setTimeout(()=>h.remove(),5000);
-},500);
-
+  setTimeout(()=>h.remove(), 5000);
+}, 600);
 </script>
 
 </body>
