@@ -8,25 +8,40 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
 <style>
+/* 🌌 Animated Background */
 body {
   margin:0;
   font-family:'Segoe UI';
-  background: linear-gradient(135deg,#fff0f3,#ffe5ec);
+  height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  height:100vh;
   overflow:hidden;
+
+  background: linear-gradient(-45deg, #ffdde1, #ee9ca7, #fbc2eb, #a6c1ee);
+  background-size: 400% 400%;
+  animation: gradientMove 12s ease infinite;
 }
 
+@keyframes gradientMove {
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
+}
+
+/* ✨ Card */
 .card {
-  background:white;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(15px);
   padding:30px;
   border-radius:20px;
   width:90%;
   max-width:420px;
   text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 
+    0 10px 30px rgba(0,0,0,0.2),
+    0 0 20px rgba(255,77,109,0.3);
+  transition: all 0.5s ease;
 }
 
 .hidden {display:none;}
@@ -50,7 +65,7 @@ input {
   text-align:center;
 }
 
-/* floating hearts */
+/* ❤️ Floating hearts */
 .heart {
   position:absolute;
   color:#ff4d6d;
@@ -61,7 +76,7 @@ input {
   100% {transform:translateY(-100vh); opacity:0;}
 }
 
-/* popup */
+/* 💭 Popup */
 #popup {
   position:fixed;
   top:50%;
@@ -111,7 +126,7 @@ input {
 
 <!-- EMOTIONAL FLOW -->
 <div id="step3" class="hidden">
-  <h2 id="flow"></h2>
+  <div id="flow"></div>
   <button onclick="nextStep(4)">Continue</button>
 </div>
 
@@ -151,8 +166,18 @@ input {
 
 <script>
 
-/* INTRO */
-let introText="I wanted to show you something…";
+/* 🎧 Start music softly on first click */
+window.onload = () => {
+  let music = document.getElementById("music");
+  music.volume = 0.15;
+
+  document.body.addEventListener("click", () => {
+    music.play().catch(()=>{});
+  }, { once: true });
+};
+
+/* ✨ INTRO */
+let introText="Hey… just stay for a minute.";
 let i=0;
 function typeIntro(){
   if(i<introText.length){
@@ -163,35 +188,46 @@ function typeIntro(){
 }
 typeIntro();
 
-/* NAVIGATION */
+/* 🌫️ SMOOTH STEP TRANSITION */
 function nextStep(n){
-  document.querySelectorAll('.card > div').forEach(d=>d.classList.add('hidden'));
-  document.getElementById('step'+n).classList.remove('hidden');
+  let current = document.querySelector('.card > div:not(.hidden)');
+  if(current){
+    current.style.opacity = 0;
+    setTimeout(()=>{
+      current.classList.add('hidden');
+
+      let next = document.getElementById('step'+n);
+      next.classList.remove('hidden');
+      next.style.opacity = 0;
+
+      setTimeout(()=> next.style.opacity = 1,100);
+    },400);
+  }
 
   if(n==3) emotionalFlow();
   if(n==7) finalMessage();
 }
 
-/* PASSCODE */
+/* 🔐 PASSCODE */
 function check(){
   if(document.getElementById('pass').value==="2504"){
     nextStep(2);
   } else alert("Try again 😄");
 }
 
-/* MOMENTS */
+/* 💭 MOMENTS */
 const moments = [
-`You don’t even try too hard…
-but you still stand out 😄`,
+`You don’t try too hard…
+but you still stand out.`,
 
 `There’s something calm about you…
-not loud… but noticeable 😌`,
+not loud… but real.`,
 
 `You look at the sky differently ✈️  
-like you’re meant for more`,
+like you’re meant for more.`,
 
-`You say you're okay 😊  
-but I don’t always believe that 💔`
+`You say you're okay…
+but I don’t always believe that.`
 ];
 
 function showMemory(i){
@@ -201,7 +237,7 @@ function showMemory(i){
   setTimeout(()=>p.style.display="none",3000);
 }
 
-/* EMOTIONAL FLOW */
+/* 💔 EMOTIONAL FLOW */
 function emotionalFlow(){
   const lines = [
     "There’s something about you…",
@@ -229,16 +265,15 @@ function emotionalFlow(){
       line.innerText = lines[i];
       el.appendChild(line);
 
-      setTimeout(() => line.style.opacity = 1, 100);
-
+      setTimeout(()=> line.style.opacity = 1,100);
       i++;
-      setTimeout(showLine, 1200);
+      setTimeout(showLine,1200);
     }
   }
   showLine();
 }
 
-/* FINAL MESSAGE */
+/* ❤️ FINAL MESSAGE */
 function finalMessage(){
   const lines = [
     "Happy Birthday…",
@@ -247,11 +282,6 @@ function finalMessage(){
     "",
     "I made this because…",
     "you’re someone I notice.",
-    "",
-    "Not loudly.",
-    "Not obviously.",
-    "",
-    "But in small ways.",
     "",
     "And I hope…",
     "",
@@ -272,16 +302,15 @@ function finalMessage(){
       line.innerText = lines[i];
       el.appendChild(line);
 
-      setTimeout(() => line.style.opacity = 1, 100);
-
+      setTimeout(()=> line.style.opacity = 1,100);
       i++;
-      setTimeout(showLine, 1400);
+      setTimeout(showLine,1400);
     }
   }
   showLine();
 }
 
-/* NO BUTTON */
+/* 😜 NO BUTTON */
 function moveNo(){
   let b=document.getElementById('no');
   b.style.position='absolute';
@@ -289,26 +318,24 @@ function moveNo(){
   b.style.top=Math.random()*300+"px";
 }
 
-/* CAKE */
+/* 🎂 CAKE */
 function blow(){
   document.querySelector('#step5 div').innerHTML="🎂";
   setTimeout(()=>nextStep(6),1500);
 }
 
-/* MUSIC */
+/* 🎵 MUSIC BUTTON */
 function playMusic(){
-  let m=document.getElementById('music');
-  m.volume=0.2;
-  m.play();
+  document.getElementById('music').play();
   nextStep(7);
 }
 
-/* CONFETTI */
+/* 🎉 CONFETTI */
 function confettiBlast(){
   confetti({particleCount:200,spread:80});
 }
 
-/* HEARTS */
+/* ❤️ FLOATING HEARTS */
 setInterval(()=>{
   let h=document.createElement("div");
   h.className="heart";
