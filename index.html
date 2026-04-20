@@ -3,273 +3,213 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flight 2504: Destination Birthday ✈️🏎️</title>
+<title>Flight 2504: The Journey ✈️</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
 <style>
     :root {
-        --cockpit-blue: #0a192f;
+        --sky-dark: #0a192f;
         --neon-gold: #fcc419;
-        --hotwheels-red: #eb4d4b;
-        --sky-text: #e0e6ed;
+        --cloud-white: rgba(255, 255, 255, 0.1);
     }
 
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        /* Aviation Sky Gradient */
-        background: radial-gradient(circle at center, #1a2a6c, #b21f1f, #fdbb2d);
-        background-size: 400% 400%;
-        animation: skyShift 15s ease infinite;
+    body, html {
+        margin: 0; padding: 0; width: 100%; height: 100%;
+        font-family: 'Segoe UI', sans-serif;
+        background: #050a14;
+        color: white;
         overflow: hidden;
-        color: var(--sky-text);
     }
 
-    @keyframes skyShift {
-        0% {background-position: 0% 50%;}
-        50% {background-position: 100% 50%;}
-        100% {background-position: 0% 50%;}
-    }
-
-    .card {
-        background: rgba(10, 25, 47, 0.9);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        padding: 30px;
-        border-radius: 20px;
-        width: 85%;
-        max-width: 400px;
-        text-align: center;
-        border: 2px solid var(--neon-gold);
-        box-shadow: 0 0 25px rgba(252, 196, 25, 0.4);
-        position: relative;
-        z-index: 10;
-        transition: all 0.5s ease;
-    }
-
-    .hidden { display: none; opacity: 0; }
-
-    /* Aviation Game Elements */
-    #game-zone {
+    /* 🌌 Cinematic Background */
+    #sky {
         position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.95);
-        z-index: 100;
-        display: none;
+        width: 100%; height: 100%;
+        background: linear-gradient(to bottom, #050a14 0%, #1a2a6c 50%, #050a14 100%);
+        z-index: -1;
     }
-    .plane {
+
+    /* ✈️ The Airplane */
+    #airplane {
         position: absolute;
-        font-size: 45px;
-        cursor: pointer;
-        filter: drop-shadow(0 0 10px #fff);
-        user-select: none;
-        transition: transform 0.1s;
-        z-index: 101;
-    }
-
-    /* Garage Grid (Gift Picker) */
-    .garage-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-top: 20px;
-    }
-    .gift-box {
-        background: linear-gradient(145deg, #1e2024, #33363a);
-        border: 2px solid var(--hotwheels-red);
-        padding: 25px;
-        border-radius: 15px;
-        cursor: pointer;
         font-size: 40px;
-        transition: 0.4s;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .gift-box:hover {
-        transform: scale(1.08) rotate(-3deg);
-        box-shadow: 0 0 15px var(--hotwheels-red);
-        background: var(--hotwheels-red);
+        left: -10%;
+        top: 50%;
+        transform: translateY(-50%) rotate(10deg);
+        transition: all 3s cubic-bezier(0.45, 0, 0.55, 1);
+        z-index: 100;
+        filter: drop-shadow(0 0 10px #fff);
     }
 
-    /* Cockpit UI Buttons */
-    button {
-        background: var(--neon-gold);
-        color: #000;
-        border: none;
-        padding: 14px 28px;
-        border-radius: 5px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        cursor: pointer;
+    /* ☁️ Moving Clouds */
+    .cloud {
+        position: absolute;
+        background: white;
+        border-radius: 50px;
+        opacity: 0.1;
+        animation: drift linear infinite;
+    }
+
+    @keyframes drift {
+        from { transform: translateX(100vw); }
+        to { transform: translateX(-20vw); }
+    }
+
+    /* 📄 Story Cards */
+    .story-card {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 350px;
+        background: rgba(10, 25, 47, 0.9);
+        padding: 30px;
+        border-radius: 15px;
+        border-left: 4px solid var(--neon-gold);
+        text-align: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: 1s;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .story-card.active { opacity: 1; visibility: visible; }
+
+    h2 { color: var(--neon-gold); font-size: 18px; text-transform: uppercase; letter-spacing: 2px; }
+    p { font-size: 16px; line-height: 1.6; font-style: italic; color: #ccd6f6; }
+
+    .btn {
+        background: transparent;
+        border: 1px solid var(--neon-gold);
+        color: var(--neon-gold);
+        padding: 10px 20px;
         margin-top: 20px;
-        transition: 0.3s;
-    }
-    button:hover {
-        background: #fff;
-        transform: translateY(-2px);
+        cursor: pointer;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 1px;
     }
 
-    /* Virtual Cake Elements */
-    .candle { font-size: 60px; cursor: pointer; transition: 0.6s; display: inline-block; }
-    .off { filter: grayscale(1) brightness(0.4); transform: scale(0.8) translateY(10px); }
-    
-    #score-text { font-size: 30px; color: var(--neon-gold); margin-top: 10px; }
+    /* 🎁 Garage (Final) */
+    #garage { display: none; text-align: center; }
+    .garage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+    .box { background: #112240; padding: 25px; border: 1px solid #233554; border-radius: 10px; cursor: pointer; font-size: 30px; transition: 0.3s; }
+    .box:hover { border-color: var(--neon-gold); transform: scale(1.05); }
+
 </style>
 </head>
 <body>
 
-<div id="game-zone">
-    <div style="padding: 40px; text-align: center;">
-        <h2 style="color: var(--neon-gold); letter-spacing: 2px;">CO-PILOT MISSION 👨‍✈️</h2>
-        <p style="color: white;">Catch 5 planes to clear the runway!</p>
-        <div id="score-text">0 / 5</div>
+<div id="sky"></div>
+<div id="airplane">✈️</div>
+
+<div id="stop1" class="story-card active">
+    <h2>Altitude: 10,000 ft</h2>
+    <p>"A year ago, the radar went silent. We were two different worlds, orbiting in a quiet void."</p>
+    <button class="btn" onclick="flyTo(2)">Continue Flight</button>
+</div>
+
+<div id="stop2" class="story-card">
+    <h2>Altitude: 25,000 ft</h2>
+    <p>"Then, the frequency cleared. Silence turned into conversations, and strangers turned into... this."</p>
+    <button class="btn" onclick="flyTo(3)">Stay on Course</button>
+</div>
+
+<div id="stop3" class="story-card">
+    <h2>Altitude: 38,000 ft</h2>
+    <p>"Knowing you now feels like finding a tailwind. The journey is better when the connection is real."</p>
+    <button class="btn" onclick="flyTo(4)">Final Approach</button>
+</div>
+
+<div id="stop4" class="story-card">
+    <h2>Final Destination: Garage</h2>
+    <p>Runway clear. Choose your birthday crate to land.</p>
+    <div class="garage-grid">
+        <div class="box" onclick="showFinal(1)">📦</div>
+        <div class="box" onclick="showFinal(2)">📦</div>
+        <div class="box" onclick="showFinal(3)">📦</div>
+        <div class="box" onclick="showFinal(4)">📦</div>
     </div>
 </div>
 
-<div class="card" id="main-card">
-    
-    <div id="step0">
-        <h2 style="color: var(--neon-gold); margin-bottom: 10px;">Flight 2504 Check-in</h2>
-        <p style="font-size: 15px; line-height: 1.6;">
-            One year ago, we were grounded in silence. <br>
-            Today, we are cleared for takeoff.
-        </p>
-        <p style="font-size: 13px; color: #8892b0; margin-top: 10px;">Ready for the journey?</p>
-        <button onclick="startMission()">Start Flight ✈️</button>
-    </div>
-
-    <div id="step1" class="hidden" style="opacity: 0;">
-        <h2 style="color: var(--hotwheels-red);">The Garage 🏎️</h2>
-        <p style="font-size: 14px;">Select a container to reveal your gift!</p>
-        <div class="garage-grid">
-            <div class="gift-box" onclick="revealGift(1)">📦</div>
-            <div class="gift-box" onclick="revealGift(2)">📦</div>
-            <div class="gift-box" onclick="revealGift(3)">📦</div>
-            <div class="gift-box" onclick="revealGift(4)">📦</div>
-        </div>
-    </div>
-
-    <div id="step2" class="hidden" style="opacity: 0;">
-        <h2 id="gift-name" style="color: var(--neon-gold);"></h2>
-        <div id="gift-icon" style="font-size: 80px; margin: 20px 0;"></div>
-        <p id="gift-msg" style="font-style: italic; font-size: 15px; min-height: 50px;"></p>
-        <button onclick="toCake()">Celebration Mode 🎂</button>
-    </div>
-
-    <div id="step3" class="hidden" style="opacity: 0;">
-        <h2 style="color: var(--neon-gold);">Make a Wish...</h2>
-        <p style="font-size: 13px;">Tap the flame to blow it out</p>
-        <div id="flame" class="candle" onclick="blowOut()">🔥</div>
-        <div style="font-size: 80px; margin-top: -20px;">🎂</div>
-        <div id="final-words" class="hidden" style="margin-top: 25px; font-weight: bold; line-height: 1.6; font-size: 17px;">
-            Happy Birthday! ❤️ <br> 
-            <span style="font-size: 14px; font-weight: normal; color: #ccd6f6;">
-                From silence to this bond... <br> I'm so glad we found our way back.
-            </span>
-        </div>
+<div id="stop5" class="story-card">
+    <div id="gift-reveal" style="font-size: 50px; margin-bottom: 10px;"></div>
+    <p id="gift-text"></p>
+    <hr style="border: 0.5px solid #233554; margin: 20px 0;">
+    <div style="font-size: 60px; cursor: pointer;" onclick="blowCake()">🎂</div>
+    <p style="font-size: 12px; color: var(--neon-gold);">Tap the cake to blow the candles</p>
+    <div id="final-msg" style="display:none; margin-top: 20px; font-weight: bold;">
+        Happy Birthday! <br> Glad we found our way back. ❤️
     </div>
 </div>
 
 <script>
-    let score = 0;
-    const gameZone = document.getElementById('game-zone');
-    const mainCard = document.getElementById('main-card');
-
-    // ✈️ Start Aviation Game
-    function startMission() {
-        mainCard.style.display = 'none';
-        gameZone.style.display = 'block';
-        spawnPlane();
+    // Create random clouds
+    for (let i = 0; i < 8; i++) {
+        let cloud = document.createElement('div');
+        cloud.className = 'cloud';
+        cloud.style.width = Math.random() * 100 + 50 + 'px';
+        cloud.style.height = Math.random() * 30 + 20 + 'px';
+        cloud.style.top = Math.random() * 100 + 'vh';
+        cloud.style.animationDuration = Math.random() * 10 + 5 + 's';
+        cloud.style.animationDelay = Math.random() * 5 + 's';
+        document.body.appendChild(cloud);
     }
 
-    function spawnPlane() {
-        if(score >= 5) {
-            gameZone.innerHTML = "<h1 style='color:var(--neon-gold); text-align:center; margin-top:45vh; letter-spacing:3px;'>RUNWAY CLEAR! 🏁</h1>";
-            setTimeout(() => {
-                gameZone.style.display = 'none';
-                mainCard.style.display = 'block';
-                showStep(1);
-            }, 1800);
-            return;
-        }
-        const plane = document.createElement('div');
-        plane.className = 'plane';
-        plane.innerHTML = '✈️';
-        plane.style.left = Math.random() * 75 + 'vw';
-        plane.style.top = Math.random() * 70 + 'vh';
-        plane.onclick = (e) => {
-            e.stopPropagation();
-            score++;
-            document.getElementById('score-text').innerText = `${score} / 5`;
-            plane.style.transform = "scale(0)";
-            setTimeout(() => plane.remove(), 100);
-            spawnPlane();
-        };
-        gameZone.appendChild(plane);
+    const plane = document.getElementById('airplane');
+    const positions = [
+        { left: '20%', top: '40%', rotate: '10deg' },
+        { left: '50%', top: '60%', rotate: '-5deg' },
+        { left: '80%', top: '30%', rotate: '15deg' },
+        { left: '110%', top: '50%', rotate: '0deg' }
+    ];
+
+    function flyTo(step) {
+        // Hide current card
+        document.querySelector('.story-card.active').classList.remove('active');
+        
+        // Move plane
+        const pos = positions[step-2];
+        plane.style.left = pos.left;
+        plane.style.top = pos.top;
+        plane.style.transform = `translateY(-50%) rotate(${pos.rotate})`;
+
+        // Show next card after delay
+        setTimeout(() => {
+            document.getElementById('stop' + step).classList.add('active');
+        }, 3000);
     }
 
-    // 🏎️ Gift Garage Data
-    const garageGifts = {
-        1: { name: "Teddy & Rose", icon: "🧸🌹", msg: "A soft reminder that you're always special." },
-        2: { name: "Special Dress", icon: "👗✨", msg: "Something as elegant as your smile." },
-        3: { name: "Scented Magic", icon: "🕯️💎", msg: "To keep your world glowing and calm." },
-        4: { name: "RC HotWheels", icon: "🏎️💨", msg: "Full speed ahead! Because you're 'Mass'." }
+    const gifts = {
+        1: { emoji: "🧸🌹", text: "A Teddy & Rose: For the moments that deserve to stay soft." },
+        2: { emoji: "👗✨", text: "A Special Dress: For the person who carries herself with grace." },
+        3: { emoji: "🕯️💎", text: "Scented Magic: To match the calm energy you bring." },
+        4: { emoji: "🏎️💨", text: "RC HotWheels: Because our bond is 'Mass' and fast." }
     };
 
-    function revealGift(id) {
-        const gift = garageGifts[id];
-        document.getElementById('gift-name').innerText = gift.name;
-        document.getElementById('gift-icon').innerText = gift.icon;
-        document.getElementById('gift-msg').innerText = gift.msg;
-        showStep(2);
-        confetti({ 
-            particleCount: 150, 
-            spread: 70, 
-            origin: { y: 0.6 },
-            colors: ['#fcc419', '#eb4d4b', '#ffffff'] 
-        });
-    }
-
-    // 🎂 Cake Blow Logic
-    function blowOut() {
-        const f = document.getElementById('flame');
-        f.innerHTML = "💨";
-        f.classList.add('off');
+    function showFinal(choice) {
+        const g = gifts[choice];
+        document.getElementById('gift-reveal').innerText = g.emoji;
+        document.getElementById('gift-text').innerText = g.text;
+        
+        document.querySelector('.story-card.active').classList.remove('active');
         setTimeout(() => {
-            f.style.opacity = '0';
-            setTimeout(() => f.style.display = 'none', 500);
-            const fw = document.getElementById('final-words');
-            fw.classList.remove('hidden');
-            fw.style.opacity = 0;
-            setTimeout(() => fw.style.opacity = 1, 100);
-            confetti({ particleCount: 300, spread: 100, origin: { y: 0.7 } });
-        }, 700);
+            document.getElementById('stop5').classList.add('active');
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.8 } });
+        }, 500);
     }
 
-    // 🌫️ Smooth Transitions
-    function showStep(n) {
-        document.querySelectorAll('.card > div').forEach(d => {
-            d.classList.add('hidden');
-            d.style.display = 'none';
-        });
-        const next = document.getElementById('step' + n);
-        next.classList.remove('hidden');
-        next.style.display = 'block';
-        setTimeout(() => {
-            next.style.opacity = 1;
-        }, 50);
+    function blowCake() {
+        confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
+        document.getElementById('final-msg').style.display = 'block';
     }
 
-    function toCake() { 
-        showStep(3); 
-    }
+    // Initial plane position
+    setTimeout(() => {
+        plane.style.left = '20%';
+        plane.style.top = '40%';
+    }, 500);
+
 </script>
-
 </body>
 </html>
