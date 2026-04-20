@@ -1,18 +1,42 @@
 body {
     margin:0;
-    font-family: Arial;
+    font-family: 'Poppins', sans-serif;
     background:black;
     color:white;
 }
 
+/* center layout */
 .center {
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
     height:100vh;
+    text-align:center;
 }
 
+/* cinematic text box */
+.overlay {
+    position:absolute;
+    bottom:20%;
+    left:50%;
+    transform:translateX(-50%);
+    width:85%;
+    max-width:500px;
+    background:rgba(0,0,0,0.6);
+    padding:30px;
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+}
+
+/* text */
+p {
+    font-size:18px;
+    line-height:1.8;
+    white-space:pre-line;
+}
+
+/* button */
 button {
     margin-top:20px;
     padding:10px 20px;
@@ -20,4 +44,17 @@ button {
     background:white;
     color:black;
     cursor:pointer;
+    border-radius:6px;
+}
+
+/* cake animation */
+#cake {
+    font-size:50px;
+    margin-top:20px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); }
 }
