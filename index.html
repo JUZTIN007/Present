@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For Someone Special ❤️</title>
+<title>For You ❤️</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
 <style>
-:root { --pink:#ff4d6d; --dark:#c9184a; }
-
 body {
   margin:0;
   font-family:'Segoe UI';
@@ -29,13 +27,12 @@ body {
   max-width:420px;
   text-align:center;
   box-shadow:0 10px 30px rgba(0,0,0,0.1);
-  position:relative;
 }
 
 .hidden {display:none;}
 
 button {
-  background:var(--pink);
+  background:#ff4d6d;
   color:white;
   border:none;
   padding:10px 20px;
@@ -44,17 +41,17 @@ button {
   margin:10px;
 }
 
-button:hover {background:var(--dark);}
+button:hover {background:#c9184a;}
 
 input {
   padding:10px;
-  border:2px solid var(--pink);
+  border:2px solid #ff4d6d;
   border-radius:10px;
   width:70%;
   text-align:center;
 }
 
-/* Floating hearts */
+/* hearts */
 .heart {
   position:absolute;
   color:#ff4d6d;
@@ -65,7 +62,7 @@ input {
   100% {transform:translateY(-100vh); opacity:0;}
 }
 
-/* Popup */
+/* popup */
 #popup {
   position:fixed;
   top:50%;
@@ -76,6 +73,7 @@ input {
   border-radius:15px;
   display:none;
   box-shadow:0 10px 30px rgba(0,0,0,0.2);
+  white-space:pre-line;
 }
 </style>
 </head>
@@ -86,65 +84,41 @@ input {
 
 <!-- INTRO -->
 <div id="step0">
-  <h2 id="intro-text"></h2>
-  <button onclick="nextStep(1)">Start ❤️</button>
+  <h2 id="intro"></h2>
+  <button onclick="nextStep(1)">Start</button>
 </div>
 
 <!-- PASSCODE -->
 <div id="step1" class="hidden">
-  <h2>Enter Secret Code 🔐</h2>
+  <h2>Enter Code 🔐</h2>
   <p>Hint: Your Birthday</p>
   <input id="pass">
   <br>
   <button onclick="check()">Unlock</button>
 </div>
 
-<!-- MEMORIES -->
+<!-- MOMENTS -->
 <div id="step2" class="hidden">
-  <h2>Memories 📸</h2>
-  <button onclick="showMemory('That first tea ☕')">Moment 1</button>
-  <button onclick="showMemory('Our long call 📞')">Moment 2</button>
-  <button onclick="showMemory('That funny fight 😂')">Moment 3</button>
+  <h2>Something about you…</h2>
+
+  <button onclick="showMemory(1)">Moment 1</button>
+  <button onclick="showMemory(2)">Moment 2</button>
+  <button onclick="showMemory(3)">Moment 3</button>
+  <button onclick="showMemory(4)">Moment 4</button>
+
   <br>
-  <button onclick="nextStep(3)">Next</button>
+  <button onclick="nextStep(3)">Continue</button>
 </div>
 
-<!-- AVIATION + PERSONALITY -->
+<!-- AVIATION FLOW -->
 <div id="step3" class="hidden">
-  <h2>Something I Know About You ✨</h2>
-
-  <p>✈️ You love the sky more than anything...</p>
-  <p>🚗 And those tiny Hot Wheels? Still your favorite 😄</p>
-
-  <p style="margin-top:15px;">
-    Konjam self-obsessed 😌 <br>
-    Konjam childish 🧸 <br>
-    But honestly… romba cute ❤️
-  </p>
-
-  <p style="margin-top:15px; font-style:italic;">
-    I know something about you…<br>
-    You smile outside 😊 <br>
-    But inside… not always the same 💔
-  </p>
-
-  <p>
-    Still… you stay strong 😇 <br>
-    That’s what makes you special ✨
-  </p>
-
-  <div style="font-size:35px;margin:10px; animation: fly 5s linear infinite;">
-    ✈️
-  </div>
-
-  <div style="font-size:30px;">🏎️💨</div>
-
-  <button onclick="nextStep(4)">Continue ❤️</button>
+  <h2 id="aviation"></h2>
+  <button onclick="nextStep(4)">Continue</button>
 </div>
 
 <!-- QUESTION -->
 <div id="step4" class="hidden">
-  <h2>One Question 😇</h2>
+  <h2>One question…</h2>
   <p>Am I your favorite?</p>
   <button onclick="nextStep(5)">Yes ❤️</button>
   <button id="no" onmouseover="moveNo()">No 😜</button>
@@ -152,14 +126,13 @@ input {
 
 <!-- CAKE -->
 <div id="step5" class="hidden">
-  <h2>Make a Wish 🎂</h2>
+  <h2>Make a wish 🎂</h2>
   <div onclick="blow()" style="font-size:70px;cursor:pointer;">🔥</div>
-  <p>Tap to blow candle</p>
 </div>
 
 <!-- MUSIC -->
 <div id="step6" class="hidden">
-  <h2>Special Song 🎵</h2>
+  <h2>Listen to this 🎵</h2>
   <button onclick="playMusic()">Play</button>
   <audio id="music" loop>
     <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
@@ -168,9 +141,9 @@ input {
 
 <!-- FINAL -->
 <div id="step7" class="hidden">
-  <h2>Happy Birthday 🎉</h2>
+  <h2>Happy Birthday ❤️</h2>
   <p id="final"></p>
-  <button onclick="confettiBlast()">Celebrate 🎆</button>
+  <button onclick="confettiBlast()">Celebrate 🎉</button>
 </div>
 
 </div>
@@ -179,50 +152,99 @@ input {
 
 <script>
 
-/* INTRO TYPE */
-let text="I made something special for you... ❤️";
+/* INTRO */
+let introText="I wanted to tell you something…";
 let i=0;
 function typeIntro(){
-  if(i<text.length){
-    document.getElementById("intro-text").innerHTML += text.charAt(i);
+  if(i<introText.length){
+    document.getElementById("intro").innerHTML+=introText.charAt(i);
     i++;
     setTimeout(typeIntro,50);
   }
 }
 typeIntro();
 
-/* STEP CONTROL */
+/* NAVIGATION */
 function nextStep(n){
   document.querySelectorAll('.card > div').forEach(d=>d.classList.add('hidden'));
   document.getElementById('step'+n).classList.remove('hidden');
-  if(n==7) typingMessage();
+  if(n==3) aviationText();
+  if(n==7) finalMessage();
 }
 
 /* PASSCODE */
 function check(){
-  let val=document.getElementById('pass').value;
-  if(val==="2504") nextStep(2);
-  else alert("Wrong 😜 Try again!");
+  if(document.getElementById('pass').value==="2504"){
+    nextStep(2);
+  } else alert("Try again 😄");
 }
 
-/* MEMORY */
-function showMemory(text){
+/* MOMENTS TEXT */
+const moments = [
+`I’ve been noticing something about you…
+
+You don’t try too hard…
+but you still stand out 😄`,
+
+`There’s this quiet confidence in you…
+
+not loud… not obvious…  
+but it’s there 😌`,
+
+`Sometimes…
+
+you look at the sky differently ✈️  
+like you’re meant for more`,
+
+`And yeah…
+
+you say you're okay 😊  
+but I don’t always believe that 💔  
+
+still… you carry it well`
+];
+
+/* SHOW MEMORY */
+function showMemory(i){
   let p=document.getElementById('popup');
-  p.innerHTML=text;
+  p.innerText= moments[i-1];
   p.style.display="block";
-  setTimeout(()=>p.style.display="none",2000);
+  setTimeout(()=>p.style.display="none",3000);
+}
+
+/* AVIATION TEXT */
+function aviationText(){
+  let text=`There’s something about you…
+
+You don’t always say much…
+
+but there’s a lot going on inside.
+
+And still…
+
+you choose to smile.
+
+That’s not easy.
+
+That’s you.`;
+
+  let j=0;
+  function type(){
+    if(j<text.length){
+      document.getElementById("aviation").innerHTML+=text.charAt(j);
+      j++;
+      setTimeout(type,40);
+    }
+  }
+  type();
 }
 
 /* NO BUTTON */
-let msgs=["Are you sure? 😢","Think again 👀","Really? 😏"];
-let idx=0;
 function moveNo(){
-  let btn=document.getElementById('no');
-  btn.style.position='absolute';
-  btn.style.left=Math.random()*300+"px";
-  btn.style.top=Math.random()*300+"px";
-  btn.innerText=msgs[idx%msgs.length];
-  idx++;
+  let b=document.getElementById('no');
+  b.style.position='absolute';
+  b.style.left=Math.random()*300+"px";
+  b.style.top=Math.random()*300+"px";
 }
 
 /* CAKE */
@@ -237,24 +259,26 @@ function playMusic(){
   nextStep(7);
 }
 
-/* FINAL MESSAGE */
-function typingMessage(){
-  let msg=`Dear ❤️,
+/* FINAL */
+function finalMessage(){
+  let msg=`Happy Birthday…
 
-Happy Birthday!
+I didn’t make this to impress you.
 
-You are honestly one of the most special people.
+I made this because…
 
-Stay happy... keep smiling 😊
+you’re someone I notice.
 
-No matter what happens,
-I’ll always wish the best for you ✨`;
+And I hope…
 
-  let j=0;
+this year makes you feel  
+as special as you actually are ✨`;
+
+  let k=0;
   function type(){
-    if(j<msg.length){
-      document.getElementById("final").innerHTML += msg.charAt(j);
-      j++;
+    if(k<msg.length){
+      document.getElementById("final").innerHTML+=msg.charAt(k);
+      k++;
       setTimeout(type,40);
     }
   }
@@ -268,23 +292,13 @@ function confettiBlast(){
 
 /* HEARTS */
 setInterval(()=>{
-  let heart=document.createElement("div");
-  heart.className="heart";
-  heart.innerHTML="❤️";
-  heart.style.left=Math.random()*100+"vw";
-  heart.style.fontSize=Math.random()*20+10+"px";
-  document.body.appendChild(heart);
-  setTimeout(()=>heart.remove(),5000);
+  let h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="❤️";
+  h.style.left=Math.random()*100+"vw";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),5000);
 },500);
-
-/* PLANE ANIMATION */
-const style=document.createElement('style');
-style.innerHTML=`
-@keyframes fly {
-  0% {transform: translateX(-150px);}
-  100% {transform: translateX(300px);}
-}`;
-document.head.appendChild(style);
 
 </script>
 
