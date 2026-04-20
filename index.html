@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD My Special One ❤️</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --pink: #ff4d6d; --dark-pink: #c9184a; --bg: #fff0f3; }
+        body { background-color: var(--bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2); width: 85%; max-width: 400px; text-align: center; position: relative; min-height: 300px; display: flex; flex-direction: column; justify-content: center; }
+        .hidden { display: none; }
+        h2 { color: var(--dark-pink); margin-bottom: 20px; }
+        p { color: #555; line-height: 1.6; }
+        input { padding: 12px; border: 2px solid var(--pink); border-radius: 10px; width: 80%; margin-bottom: 15px; outline: none; font-size: 16px; text-align: center; }
+        button { background: var(--pink); color: white; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; transition: 0.3s; margin: 10px auto; width: fit-content; }
+        button:hover { background: var(--dark-pink); transform: scale(1.05); }
+        #no-btn { position: absolute; transition: 0.1s; z-index: 100; }
+        .memory-chip { background: #ffe5ec; padding: 10px; margin: 5px; border-radius: 10px; cursor: pointer; display: inline-block; font-size: 14px; }
+        #final-msg { font-style: italic; white-space: pre-line; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div id="step1">
+            <h2>Halt! 🛑</h2>
+            <p>Enter the 4-digit code (DDMM) to see your surprise!</p>
+            <input type="text" id="passcode" placeholder="Hint: Your B'day">
+            <br>
+            <button onclick="checkPass()">Unlock 🔑</button>
+        </div>
+
+        <div id="step2" class="hidden">
+            <h2>Memories Box 📸</h2>
+            <p>Click each to remember...</p>
+            <div class="memory-chip" onclick="alert('That first tea we had together! ☕')">Moment 1</div>
+            <div class="memory-chip" onclick="alert('The 2-hour long phone call! 📞')">Moment 2</div>
+            <div class="memory-chip" onclick="alert('That silly fight we had! 😂')">Moment 3</div>
+            <br><button onclick="nextStep(3)">Next Surprise ✨</button>
+        </div>
+
+        <div id="step3" class="hidden">
+            <h2>Simple Question...</h2>
+            <p>Am I your favorite person? 😇</p>
+            <button onclick="nextStep(4)">Yes, Always! ❤️</button>
+            <button id="no-btn" onmouseover="moveNo()">Nope!</button>
+        </div>
+
+        <div id="step4" class="hidden">
+            <h2>Make a Wish! 🕯️</h2>
+            <div id="cake" style="font-size: 80px; cursor: pointer;" onclick="blowCandle()">🔥</div>
+            <p id="candle-text">Click the fire to blow it out!</p>
+        </div>
+
+        <div id="step5" class="hidden">
+            <h2>A Special Tune 🎵</h2>
+            <p>I picked a song just for you!</p>
+            <button onclick="playMusic()">Play My Song 🎧</button>
+            <audio id="bg-music" loop>
+                <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div id="step6" class="hidden">
+            <h2>Happy Birthday! 🎂</h2>
+            <p id="final-msg">
+                Dear [Her Name],
+                
+                You are the most amazing person I know. 
+                Happy 25th April! May this year bring you 
+                all the happiness you deserve.
+                
+                Keep smiling always! ✨
+            </p>
+            <button onclick="startConfetti()">More Love! ❤️</button>
+        </div>
+    </div>
+
+    <script>
+        function nextStep(n) {
+            document.querySelectorAll('.card > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById('step' + n).classList.remove('hidden');
+            if(n === 6) startConfetti();
+        }
+
+        function checkPass() {
+            if(document.getElementById('passcode').value === "2504") nextStep(2);
+            else alert("Thappa podura macha! Try again.");
+        }
+
+        function moveNo() {
+            const btn = document.getElementById('no-btn');
+            const x = Math.random() * (window.innerWidth - 150);
+            const y = Math.random() * (window.innerHeight - 150);
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+        }
+
+        function blowCandle() {
+            document.getElementById('cake').innerHTML = "🎂";
+            document.getElementById('candle-text').innerText = "Wish granted! 🎉";
+            setTimeout(() => nextStep(5), 2000);
+        }
+
+        function playMusic() {
+            const music = document.getElementById('bg-music');
+            music.play();
+            nextStep(6);
+        }
+
+        function startConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ff758f', '#ffb3c1']
+            });
+        }
+    </script>
+</body>
+</html>
