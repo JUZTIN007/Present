@@ -3,208 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flight 2504: Precision Approach ❤️</title>
+<title>Flight 2504</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
 <style>
-    :root {
-        --teal: #008080;
-        --accent: #ff7f50; /* Orange-coral */
-    }
-    body, html {
-        margin: 0; padding: 0; width: 100%; height: 100%;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-        overflow: hidden; background: #1a1a1a; color: white;
-    }
+body {
+    margin:0;
+    background:#000;
+    overflow:hidden;
+    font-family: 'Inter', sans-serif;
+    color:#fff;
+}
 
-    /* 🌌 Cinematic Background */
-    #world {
-        position: relative; width: 100%; height: 100%;
-        perspective: 1200px;
-        background: radial-gradient(circle at bottom, #2a3a5a 0%, #1a1a1a 100%);
-        transition: background 3s ease;
-    }
+#canvas-container {
+    position:fixed;
+    top:0; left:0;
+}
 
-    /* ☁️ Realistic Depth Layers (3D Depth) */
-    .depth-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-    
-    .c1 { width: 150px; height: 50px; background: rgba(255,255,255,0.2); border-radius: 50%; filter: blur(10px); animation: driftBack 20s linear infinite; }
-    .c2 { width: 250px; height: 80px; background: rgba(255,255,255,0.4); border-radius: 50%; filter: blur(15px); animation: driftFront 10s linear infinite; }
+.overlay {
+    position:absolute;
+    bottom:10%;
+    left:50%;
+    transform:translateX(-50%);
+    width:85%;
+    max-width:400px;
+    text-align:center;
+    background:rgba(0,0,0,0.7);
+    backdrop-filter:blur(20px);
+    padding:25px;
+    border-radius:20px;
+    opacity:0;
+    transition:1s;
+}
 
-    @keyframes driftBack {
-        from { transform: translateZ(-200px) translateX(110vw); }
-        to { transform: translateZ(-200px) translateX(-40vw); }
-    }
-    @keyframes driftFront {
-        from { transform: translateZ(-100px) translateX(120vw); }
-        to { transform: translateZ(-100px) translateX(-50vw); }
-    }
+.overlay.active {
+    opacity:1;
+    transform:translateX(-50%) translateY(-10px);
+}
 
-    /* 📄 Ultra-Realistic Glass Cards */
-    .card {
-        position: absolute; bottom: 8%; left: 50%;
-        transform: translateX(-50%) translateZ(100px);
-        width: 85%; max-width: 380px;
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
-        border: 1px solid rgba(255,255,255,0.15);
-        padding: 30px; border-radius: 25px;
-        text-align: center; opacity: 0; visibility: hidden;
-        transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 200;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    }
-    .card.active { opacity: 1; visibility: visible; transform: translateX(-50%) translateZ(100px) translateY(-10px); }
+button {
+    margin-top:15px;
+    padding:10px 20px;
+    border:none;
+    background:#fff;
+    color:#000;
+    cursor:pointer;
+}
 
-    .btn {
-        background: #fff; color: #000; border: none;
-        padding: 15px 35px; border-radius: 40px;
-        font-weight: bold; margin-top: 20px; cursor: pointer;
-        text-transform: uppercase; letter-spacing: 1px; font-size: 12px;
-        transition: 0.3s; width: 100%;
-    }
-    .btn:hover { background: var(--accent); color: white; }
-
-    /* 🎁 Gift Crate Reveal */
-    .crate-box {
-        background: linear-gradient(145deg, #2a2a2a, #333);
-        padding: 25px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);
-        cursor: pointer; transition: 0.3s; font-size: 30px;
-    }
-    .crate-box:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,127,80,0.5); border-color: var(--accent); }
-
-    /* 🧸 Realistic Gift Visuals with Life */
-    .gift-reveal-stage { position: relative; width: 100px; height: 100px; margin: 15px auto; }
-    
-    /* Pure CSS Teddy & Rose Animation */
-    .teddy { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #a1887f; border-radius: 50%; animation: float 3s infinite; }
-    .teddy-ear { position: absolute; background: #a1887f; border-radius: 50%; }
-    .teddy-ear.l { width: 30px; height: 30px; top: -15px; left: 10px; }
-    .teddy-ear.r { width: 30px; height: 30px; top: -15px; right: 10px; }
-    .rose { position: absolute; background: var(--accent); border-radius: 50%; width: 25px; height: 25px; bottom: 10px; right: 10px; animation: provideRose 5s infinite; }
-    .rose-stem { position: absolute; background: #2e7d32; width: 3px; height: 20px; bottom: 0px; right: 21px; }
-
-    /* RC Car CSS */
-    .rc-car { position: absolute; top: 20px; left: 10px; width: 80px; height: 40px; background: var(--accent); border-radius: 10px; animation: speedLine 4s infinite; }
-    .wheel { position: absolute; background: #000; border-radius: 50%; width: 15px; height: 15px; border: 2px solid white; }
-    .wheel.fl { top: -5px; left: 10px; }
-    .wheel.fr { top: -5px; right: 10px; }
-    .wheel.bl { bottom: -5px; left: 10px; }
-    .wheel.br { bottom: -5px; right: 10px; }
-
-    @keyframes provideRose { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-20px, -10px); } }
-    @keyframes speedLine { 0% { left: 10vw; } 50% { left: 80vw; } 100% { left: 10vw; } }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
+#cake {
+    font-size:40px;
+    cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
-<div id="world">
-    <div class="depth-layer"><div class="c1" style="top:20vh; left:10vw;"></div></div>
-    <div class="depth-layer"><div class="c2" style="top:40vh; left:60vw;"></div></div>
+<!-- MUSIC -->
+<audio id="music" loop>
+<source src="your-music.mp3" type="audio/mpeg">
+</audio>
 
-    <div id="airplane-container" style="position:absolute; width: 100px; height: 100px; left:-120px; top:45%; transform-style: preserve-3d; transition: all 4s cubic-bezier(0.4, 0, 0.2, 1); z-index:100;">
-        <svg viewBox="0 0 24 24" fill="white" style="width:100%; height:100%; filter: drop-shadow(0 30px 15px rgba(0,0,0,0.5)); transform-origin: center center; transition: transform 4s;">
-            <path d="M21,16L21,14L13,9L13,3.5A1.5,1.5 0 0,0 11.5,2A1.5,1.5 0 0,0 10,3.5L10,9L2,14L2,16L10,13.5L10,19L8,20.5L8,22L11.5,21L15,22L15,20.5L13,19L13,13.5L21,16Z" />
-        </svg>
-    </div>
+<div id="canvas-container"></div>
 
-    <div id="stop1" class="card active">
-        <h2 style="color:var(--accent); letter-spacing: 2px;">LOGBOOK: 2025</h2>
-        <p>"A year of parallel drift. Radar silent. Two different worlds, orbiting in a quiet void."</p>
-        <button class="btn" onclick="fly(2, '#4a6a7a')">Initiate Ascent</button>
-    </div>
+<!-- STAGE 1 -->
+<div id="stage1" class="overlay active">
+<p id="text1"></p>
+<button onclick="next(2)">Continue</button>
+</div>
 
-    <div id="stop2" class="card">
-        <h2 style="color:var(--accent); letter-spacing: 2px;">ALTITUDE: CRUISE</h2>
-        <p>"The frequency cleared. Silence became words, and a real connection took flight."</p>
-        <button class="btn" onclick="fly(3, '#2e3e5e')">Hold Course</button>
-    </div>
+<!-- QUIZ -->
+<div id="quiz" class="overlay">
+<p>Do you remember how we started?</p>
+<button onclick="answer(false)">Random</button>
+<button onclick="answer(true)">Somewhere unexpected</button>
+<button onclick="answer(false)">I forgot</button>
+</div>
 
-    <div id="stop3" class="card">
-        <h2 style="color:var(--teal); letter-spacing: 2px;">APPROACH: R/WY 2504</h2>
-        <p>"Knowing you now is the destination. Let's land together."</p>
-        <button class="btn" onclick="fly(4, '#000')">Touchdown 🏁</button>
-    </div>
+<!-- STAGE 2 -->
+<div id="stage2" class="overlay">
+<p id="text2"></p>
+<button onclick="next(3)">Continue</button>
+</div>
 
-    <div id="stop4" class="card">
-        <h2 style="color:var(--teal);">Paylod Security Check</h2>
-        <p>Runway clear. Select your birthday container:</p>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
-            <div class="crate-box" onclick="revealGift(1)">📦</div>
-            <div class="crate-box" onclick="revealGift(2)">📦</div>
-            <div class="crate-box" onclick="revealGift(3)">📦</div>
-            <div class="crate-box" onclick="revealGift(4)">📦</div>
-        </div>
-    </div>
-
-    <div id="stop5" class="card">
-        <div class="gift-reveal-stage" id="gift-visual"></div>
-        <div id="gift-title" style="font-weight: bold; margin-bottom: 10px;"></div>
-        <p id="gift-desc" style="font-size: 14px; color: #aaa;"></p>
-        
-        <div style="font-size: 60px; cursor: pointer; margin: 15px 0;" onclick="blowCake()">🎂</div>
-        <div id="final-wish" style="display:none; font-weight: bold; color:var(--teal);">
-            <hr style="border: 0.5px solid #333; margin: 15px 0;">
-            HAPPY BIRTHDAY! <br> Glad we found our way back. ❤️
-        </div>
-    </div>
+<!-- FINAL -->
+<div id="stage3" class="overlay">
+<p id="finalText"></p>
+<div id="cake" onclick="celebrate()">🎂</div>
 </div>
 
 <script>
-    const plane = document.getElementById('airplane-container');
-    const planeSvg = plane.querySelector('svg');
+let scene, camera, renderer, stars, plane;
+let targetX = 0;
 
-    function fly(step, skyColor) {
-        document.getElementById('world').style.background = `radial-gradient(circle at bottom, ${skyColor} 0%, #1a1a1a 100%)`;
-        document.querySelector('.card.active').classList.remove('active');
+// INIT 3D
+function init() {
+    scene = new THREE.Scene();
 
-        // Cinematic 3D Rotations (Tilt)
-        const waypoints = [
-            { left: '20%', top: '40%', rotZ: '15deg', rotX: '20deg' },
-            { left: '55%', top: '60%', rotZ: '-10deg', rotX: '-15deg' },
-            { left: '85%', top: '30%', rotZ: '10deg', rotX: '15deg' },
-            { left: '48%', top: '75%', rotZ: '0deg', rotX: '0deg' }
-        ];
-        const w = waypoints[step-1];
-        plane.style.left = w.left;
-        plane.style.top = w.top;
-        planeSvg.style.transform = `rotateZ(${w.rotZ}) rotateX(${w.rotX})`;
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1,1000);
+    renderer = new THREE.WebGLRenderer({alpha:true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById("canvas-container").appendChild(renderer.domElement);
 
-        setTimeout(() => {
-            document.getElementById('stop' + step).classList.add('active');
-        }, 3500);
+    const light = new THREE.PointLight(0xffffff,1);
+    light.position.set(5,5,5);
+    scene.add(light);
+
+    // STARS
+    const geo = new THREE.BufferGeometry();
+    let vertices=[];
+    for(let i=0;i<4000;i++){
+        vertices.push((Math.random()-0.5)*2000);
+        vertices.push((Math.random()-0.5)*2000);
+        vertices.push((Math.random()-0.5)*2000);
     }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices,3));
+    stars = new THREE.Points(geo,new THREE.PointsMaterial({size:1}));
+    scene.add(stars);
 
-    const giftData = {
-        1: { title: "Teddy & Rose (Active)", visual: '<div class="teddy"><div class="teddy-ear l"></div><div class="teddy-ear r"></div><div class="rose"><div class="rose-stem"></div></div></div>', desc: "The Sentimental Payload: For the moments that deserve to stay soft." },
-        2: { title: "Special Dress (Grace)", visual: '<div style="font-size: 80px;">👗✨</div>', desc: "The Elegant Drape: For the one who carries herself with grace." },
-        3: { title: "Scented Candles (Calm)", visual: '<div style="font-size: 80px;">🕯️💎</div>', desc: "The Aromatic Essence: To match the calm energy you bring." },
-        4: { title: "HotWheels RC Car (Mass)", visual: '<div class="rc-car"><div class="wheel fl"></div><div class="wheel fr"></div><div class="wheel bl"></div><div class="wheel br"></div></div>', desc: "The Performance R/C: For a bond that's 'Mass' and moving fast." }
-    };
+    // PLANE
+    const g = new THREE.ConeGeometry(0.5,2,8);
+    const m = new THREE.MeshStandardMaterial({color:0xffffff, emissive:0x222244});
+    plane = new THREE.Mesh(g,m);
+    plane.rotation.x = Math.PI/2;
+    scene.add(plane);
 
-    function revealGift(id) {
-        const gift = giftData[id];
-        document.getElementById('gift-visual').innerHTML = gift.visual;
-        document.getElementById('gift-title').innerText = "SYSTEM: " + gift.title;
-        document.getElementById('gift-desc').innerText = gift.desc;
-        
-        document.querySelector('.card.active').classList.remove('active');
-        setTimeout(() => {
-            document.getElementById('stop5').classList.add('active');
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.8 }, colors: ['#008080', '#ff7f50'] });
-        }, 600);
+    camera.position.z = 5;
+
+    animate();
+}
+
+// ANIMATION
+function animate(){
+    requestAnimationFrame(animate);
+
+    stars.position.z += 1;
+    if(stars.position.z>500) stars.position.z=0;
+
+    plane.rotation.z += (targetX - plane.rotation.z)*0.05;
+
+    renderer.render(scene,camera);
+}
+
+// MOUSE PARALLAX
+document.addEventListener("mousemove",(e)=>{
+    targetX = (e.clientX/window.innerWidth - 0.5);
+});
+
+// TYPING EFFECT
+function typeText(element, text, speed=40){
+    let i=0;
+    element.innerHTML="";
+    let interval=setInterval(()=>{
+        element.innerHTML += text.charAt(i);
+        i++;
+        if(i>=text.length) clearInterval(interval);
+    },speed);
+}
+
+// NAVIGATION
+function next(step){
+    document.querySelectorAll(".overlay").forEach(e=>e.classList.remove("active"));
+
+    if(step===2){
+        document.getElementById("quiz").classList.add("active");
     }
-
-    function blowCake() {
-        confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
-        document.getElementById('final-wish').style.display = 'block';
+    if(step===3){
+        document.getElementById("stage2").classList.add("active");
+        typeText(document.getElementById("text2"),
+        "Somehow… we came back. Not the same… but better.");
     }
+}
 
-    // Launch
-    setTimeout(() => { plane.style.left = '20%'; }, 500);
+// QUIZ
+function answer(correct){
+    if(correct){
+        alert("See… you remember 😉");
+        document.getElementById("quiz").classList.remove("active");
+        document.getElementById("stage2").classList.add("active");
+
+        typeText(document.getElementById("text2"),
+        "Out of everything… we still found our way back.");
+    } else {
+        alert("Hmm… wrong 😌 try again");
+    }
+}
+
+// FINAL
+function celebrate(){
+    document.getElementById("stage3").classList.add("active");
+
+    typeText(document.getElementById("finalText"),
+    "Not every story gets a second chance...\n\nBut ours did.\n\nAnd I'm glad it was with you.\n\nHappy Birthday ❤️");
+
+    confetti({particleCount:400,spread:120});
+}
+
+// START MUSIC ON CLICK
+document.body.addEventListener("click",()=>{
+    document.getElementById("music").play();
+},{once:true});
+
+// START TEXT
+window.onload=()=>{
+    init();
+
+    typeText(document.getElementById("text1"),
+    "There was a time… we stopped talking.\n\nI didn't think we'd find this again.");
+}
 </script>
+
 </body>
 </html>
